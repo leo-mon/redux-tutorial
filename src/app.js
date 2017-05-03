@@ -1,4 +1,5 @@
 import expect from 'expect'  // テスト用ライブラリ
+import { createStore } from 'redux'
 
 // Reducer
 const counter = (state = 0, action) => {
@@ -11,6 +12,26 @@ const counter = (state = 0, action) => {
       return state;
   }
 }
+
+// Store作成
+const store = createStore(counter);  // Reducerとしてcounterを指定
+
+// getState()テスト
+console.log('getState():' + store.getState());  // 現在の状態取得
+
+// dispathc()テスト
+store.dispatch({ type: 'INCREMENT' });  // 'INCREMENT' Actionをdispatch
+console.log('dispatch INCREMENT');
+console.log('getState():' + store.getState());
+
+// subscribe()テスト
+store.subscribe(() => {
+  document.body.innerText = store.getState();  // dispatchが実行されるたびこれを実行
+});
+document.addEventListener('click', () => {
+  store.dispatch({ type: 'INCREMENT' });  // 画面上どこかクリックされたらdispatch
+});
+
 
 // テストコード
 // expect(foo()).bar(X) fooの結果とXとをbar()で評価

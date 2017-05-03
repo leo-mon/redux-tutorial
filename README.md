@@ -90,3 +90,10 @@ function counter(state, action) {
 
 慣例としてstateに`undefined`を受け取った場合reduxは初期状態を返さなくてはならない  
 switch-caseとES6のデフォルト引数の導入（見栄えがいいため）
+
+
+## Store Methods: getState(), dispatch(), and subscribe()
+- `dist/index.htmlを追加`
+- Redux(の中のcreateStore)をimport
+
+StoreがReduxの3つの原則をひとまとめにする…全ての状態が集約、それを変更するにはActionをDispatchする必要があり、それを実行するReducerは前の状態とActionを受け取り次の状態を返すPure Functionである必要がある  
