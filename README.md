@@ -96,4 +96,12 @@ switch-caseとES6のデフォルト引数の導入（見栄えがいいため）
 - `dist/index.htmlを追加`
 - Redux(の中のcreateStore)をimport
 
-StoreがReduxの3つの原則をひとまとめにする…全ての状態が集約、それを変更するにはActionをDispatchする必要があり、それを実行するReducerは前の状態とActionを受け取り次の状態を返すPure Functionである必要がある  
+StoreがReduxの3つの原則をひとまとめにする…全ての状態を保持し、ActionをDispatchする。作成の際、アップデート方法を伝えるためにReducerを指定する  
+
+Storeには3つ重要なメソッドがある
+- `getState()`: その時点の状態
+- `dispatch()`: 指定したActionを実行
+- `subscribe()`: dispatchされるたびにコールされる関数を指定
+
+subscribeのコールバックの中でinnerTextを呼んでるため初期値が表示されない  
+ここをrender()を定義し外出しする

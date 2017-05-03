@@ -16,18 +16,14 @@ const counter = (state = 0, action) => {
 // Store作成
 const store = createStore(counter);  // Reducerとしてcounterを指定
 
-// getState()テスト
-console.log('getState():' + store.getState());  // 現在の状態取得
+// 画面描画関数
+const render = () => {
+  document.body.innerText = store.getState();  
+}
 
-// dispathc()テスト
-store.dispatch({ type: 'INCREMENT' });  // 'INCREMENT' Actionをdispatch
-console.log('dispatch INCREMENT');
-console.log('getState():' + store.getState());
+store.subscribe(render);  // dispatchされるたびrender()実行
+render()  // 初期値描画
 
-// subscribe()テスト
-store.subscribe(() => {
-  document.body.innerText = store.getState();  // dispatchが実行されるたびこれを実行
-});
 document.addEventListener('click', () => {
   store.dispatch({ type: 'INCREMENT' });  // 画面上どこかクリックされたらdispatch
 });
