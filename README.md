@@ -22,7 +22,7 @@ mkdir src dist
 webpack -w
 ```
 
-## THe Single Immutable State Tree
+## The Single Immutable State Tree
 1つめの原則: 簡単なものから複雑なものまで全ての状態(データからUIの状態まで)を一つのJSオブジェクトとして保持するのがRedux
 
 宣言的に記述されるので遷移をトラックできる
@@ -30,3 +30,14 @@ webpack -w
 もっと複雑な場合はオブジェクトに(JSON)
 
 これをStateとか、State Treeと呼ぶ  
+
+## Describing State Changes with Actions
+2つめの原則: State TreeはRead Only  
+
+状態を変えたい時はActionをDispatchする  
+Actionは変更を記述したプレーンなJSオブジェクト
+
+中身は自由だが1つ、typeプロパティを記述する必要がある  
+この例のように複数カウンタがある場合はindexプロパティをつけて区別する
+
+このやりかたはよくスケールする…コンポーネントは何が起こるかを持たず、単に適切なプロパティをつけてActionをDispatchするだけ  
