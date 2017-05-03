@@ -22,4 +22,11 @@ mkdir src dist
 webpack -w
 ```
 
-##
+## THe Single Immutable State Tree
+1つめの原則: 簡単なものから複雑なものまで全ての状態(データからUIの状態まで)を一つのJSオブジェクトとして保持するのがRedux
+
+宣言的に記述されるので遷移をトラックできる
+例: カウンタの数字がJSのnumberで保持されたり、複数ある場合はリストで保持される  
+もっと複雑な場合はオブジェクトに(JSON)
+
+これをStateとか、State Treeと呼ぶ  
