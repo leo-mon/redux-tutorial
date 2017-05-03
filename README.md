@@ -70,3 +70,23 @@ Reduxはこのアプローチを別の側面から補足する...
 これが3つの（最後の）原則:
 状態を変更するにはそのための関数を書く必要があり、それは前の状態、DispatchされるAction、次の状態を持つPure Functionでなければならない
 この関数のことを**Reducer**と呼ぶ
+
+## Writing a Counter Reducer with Tests
+> 超速ライブコーディンク、すげー
+
+最初に作るのはReducer、前の状態とActionを受け取り、次の状態を返す関数
+```javascript
+function counter(state, action) {
+  return state;
+}
+```
+
+みたいな。ただその前にテストコードを書いておく  
+
+- `src/app.js`　へ記述していく
+- webpackを起動しておき`node dist/app.js`でテスト実行
+
+> あとは動画に沿って付け足し
+
+慣例としてstateに`undefined`を受け取った場合reduxは初期状態を返さなくてはならない  
+switch-caseとES6のデフォルト引数の導入（見栄えがいいため）
