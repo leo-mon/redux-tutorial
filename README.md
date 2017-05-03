@@ -105,3 +105,8 @@ Storeには3つ重要なメソッドがある
 
 subscribeのコールバックの中でinnerTextを呼んでるため初期値が表示されない  
 ここをrender()を定義し外出しする
+
+## Implementing Store from Scratch
+理解のために`createStore()`メソッドを手で作る  
+
+> 爆速コーディング。。。。

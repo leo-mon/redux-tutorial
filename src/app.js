@@ -1,5 +1,5 @@
 import expect from 'expect'  // テスト用ライブラリ
-import { createStore } from 'redux'
+// import { createStore } from 'redux'
 
 // Reducer
 const counter = (state = 0, action) => {
@@ -13,12 +13,36 @@ const counter = (state = 0, action) => {
   }
 }
 
+// createStoreを手実装
+const createStore = (reducer) => {
+  let state;
+  let listeners = [];  // dispatchされるたびコールされる関数のリスト
+
+  const getState = () => state;  // stateを返す(return文は省略できる)
+
+  const dispatch = (action) => {
+    state = reducer(state, action);  // reducer による値の更新
+    listeners.forEach(listener => listener());  // リスト内の関数を順次実行
+  }
+
+  const subscribe = (listener) => {
+    listeners.push(listener);  // 与えられた関数をdispatchのたび呼ばれるリストへ追加
+    // unsubscribeメソッドを作る代わりに、返り値にunsubscribeを提供する関数を指定
+    return () => {
+      listeners = listeners.filter(l => l !== listener);  // listenner以外の関数のリスト
+    };
+  };
+  dispatch({});  // 引数指定しないことで初期化
+
+  return { getState, dispatch, subscribe };
+}
+
 // Store作成
 const store = createStore(counter);  // Reducerとしてcounterを指定
 
 // 画面描画関数
 const render = () => {
-  document.body.innerText = store.getState();  
+  document.body.innerText = store.getState();
 }
 
 store.subscribe(render);  // dispatchされるたびrender()実行
