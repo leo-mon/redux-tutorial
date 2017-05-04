@@ -110,3 +110,16 @@ subscribeのコールバックの中でinnerTextを呼んでるため初期値�
 理解のために`createStore()`メソッドを手で作る  
 
 > 爆速コーディング。。。。
+
+
+## React Counter example
+DOMを直接いじるのはスケールしないので、`render()` で表現していた部分をReactへ
+> 向こうでもDOMはドムの様だ
+
+`Counter` コンポーネント（Reactコンポーネント）へReduxとの依存関係をハードコードはせず、コールする際にpropsとして渡す
+
+まとめなおすと
+`Counter`コンポーネント: dumpコンポーネントと呼称、ビジネスロジックは含まない  
+アプリケーションの状態とレンダリング可能な出力と、どうコールバックがpropsを通じて渡され、イベントハンドラと結びつけられるか、のみが定義される
+
+`render`メソッド: Counterを呼び出し、現在の状態をstoreから渡す、dispatchされるactionも。storeが更新されるたびにrenderが呼ばれるため、Counterは常に最新の値を保持し続ける
