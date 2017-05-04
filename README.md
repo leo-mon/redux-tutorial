@@ -123,3 +123,15 @@ DOMを直接いじるのはスケールしないので、`render()` で表現し
 アプリケーションの状態とレンダリング可能な出力と、どうコールバックがpropsを通じて渡され、イベントハンドラと結びつけられるか、のみが定義される
 
 `render`メソッド: Counterを呼び出し、現在の状態をstoreから渡す、dispatchされるactionも。storeが更新されるたびにrenderが呼ばれるため、Counterは常に最新の値を保持し続ける
+
+
+## Avoiding Array Mutations with concat(), slice(), and ...spread
+状態の管理にアレイを使う場合、もとのアレイを変更しない様に気をつける必要がある
+> Pythonのせいでリストとこれまで書いてたけどまあ雰囲気でわかるからよし
+```
+yarn add --dev deep-freeze  # オブジェクトを不変にするライブラリ
+```
+
+> ひとまずmulticounters.jsへ分割してそこへ記述、それに伴いWebpackの設定も変更
+
+`concat()`, `slice()`, `...`:スプレッド演算子を活用して元のアレイを変更しない様にして扱っていく
