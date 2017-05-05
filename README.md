@@ -156,3 +156,14 @@ yarn add --dev babel-plugin-transform-object-rest-spread
 actionに与えられているidを選択する必要がある->map関数を利用
 > mapって直接値いじらないのね、勉強
 > testToggleTodoは中身書き換え
+
+## Reducer Composition with Arrays
+前節までの2つのAction
+AddTodo: 新しく追加...Arrayの変更
+TaggleTodo: 既存の変更...個々の要素の変更
+現在Arrayをどう変更するかと、個々のTodoをどう変更するかが1つのReducerの中にある状態  
+これの分割もReduxは簡単にできる
+todos -> todoへの移設
+
+いじるState Tree が違う場合そのレベルごとにReducerを分割して上から呼ぶ様にする（Reducer Composition）
+こうすることでアプリケーションが複雑になってきた時管理しやすくなる（意訳
