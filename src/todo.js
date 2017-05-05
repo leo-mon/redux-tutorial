@@ -13,11 +13,49 @@ const todos = (state = [], action) => {
           completed: false
         }
       ];
+    case 'TOGGLE_TODO':
+      return state.map(todo => {
+        if (todo.id !== action.id) {
+          return todo;
+        }
+
+        return {
+          ...todo,
+          completed: !todo.completed
+        }
+      })
     default:
       return state;
   }
 };
 
+const toggleTodo = (todo) => {
+  /* 辞書が凍結されているため書き換えは不可
+  todo.completed = !todo.completed;
+  return todo;
+  */
+  /* これでも良いが冗長
+  return {
+  id: todo.id,
+  text: todo.text,
+  completed: !todo.completed
+};
+*/
+/* ES6の記法: 第一引数のオブジェクトに第二引数以下のオブジェクトを追加、変更
+return Object.assign({}, todo, {
+completed: !todo.completed
+});
+*/
+// ...を利用した記法(ES7で取り込まれる予定だそうな)
+return {
+  ...todo,
+  completed: !todo.completed
+};
+};
+
+
+
+// テスト
 const testAddTodo = () => {
   const stateBefore = [];
   const action = {
@@ -41,48 +79,43 @@ const testAddTodo = () => {
   ).toEqual(stateAfter);
 };
 
-const toggleTodo = (todo) => {
-  /* 辞書が凍結されているため書き換えは不可
-  todo.completed = !todo.completed;
-  return todo;
-  */
-  /* これでも良いが冗長
-  return {
-    id: todo.id,
-    text: todo.text,
-    completed: !todo.completed
-  };
-  */
-  /* ES6の記法: 第一引数のオブジェクトに第二引数以下のオブジェクトを追加、変更
-  return Object.assign({}, todo, {
-    completed: !todo.completed
-  });
-  */
-  // ...を利用した記法(ES7で取り込まれる予定だそうな)
-  return {
-    ...todo,
-    completed: !todo.completed
-  };
-};
-
-// テスト
 const testToggleTodo = () => {
-  const todoBefore = {
-    id: 0,
-    text: 'Learn Redux',
-    completed: false
+  const stateBefore = [
+    {
+      id: 0,
+      text: 'Learn Redux',
+      completed: false
+    },
+    {
+      id: 1,
+      text: 'Go shopping',
+      completed: false
+    }
+  ];
+  const action = {
+    type: 'TOGGLE_TODO',
+    id: 1
   };
-  const todoAfter = {
-    id: 0,
-    text: 'Learn Redux',
-    completed: true
-  };
+  ;
+  const stateAfter = [
+    {
+      id: 0,
+      text: 'Learn Redux',
+      completed: false
+    },
+    {
+      id: 1,
+      text: 'Go shopping',
+      completed: true
+    }
+  ];
 
-  deepFreeze(todoBefore);
+  deepFreeze(stateBefore);
+  deepFreeze(action)
 
   expect(
-    toggleTodo(todoBefore)
-  ).toEqual(todoAfter);
+    todos(stateBefore, action)
+  ).toEqual(stateAfter);
 };
 
 testAddTodo()

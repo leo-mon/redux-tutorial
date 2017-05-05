@@ -150,3 +150,9 @@ yarn add --dev babel-plugin-transform-object-rest-spread
 ## Writing a Todo List Reducer (Adding a Todo)
 > 引き続き`todo.js`へ追記していく方向で（toggleTodoは参考に残しておく...おそらくこの後Reducerに実装されるだおうけど
 > 前節を参考にReducerを実装していく、特筆すべき点はなし
+
+
+## Writing a Todo List Reducer (Toggling a Todo)
+actionに与えられているidを選択する必要がある->map関数を利用
+> mapって直接値いじらないのね、勉強
+> testToggleTodoは中身書き換え

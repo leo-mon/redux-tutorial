@@ -4630,11 +4630,45 @@ var todos = function todos() {
         text: action.text,
         completed: false
       }]);
+    case 'TOGGLE_TODO':
+      return state.map(function (todo) {
+        if (todo.id !== action.id) {
+          return todo;
+        }
+
+        return _extends({}, todo, {
+          completed: !todo.completed
+        });
+      });
     default:
       return state;
   }
 };
 
+var toggleTodo = function toggleTodo(todo) {
+  /* 辞書が凍結されているため書き換えは不可
+  todo.completed = !todo.completed;
+  return todo;
+  */
+  /* これでも良いが冗長
+  return {
+  id: todo.id,
+  text: todo.text,
+  completed: !todo.completed
+  };
+  */
+  /* ES6の記法: 第一引数のオブジェクトに第二引数以下のオブジェクトを追加、変更
+  return Object.assign({}, todo, {
+  completed: !todo.completed
+  });
+  */
+  // ...を利用した記法(ES7で取り込まれる予定だそうな)
+  return _extends({}, todo, {
+    completed: !todo.completed
+  });
+};
+
+// テスト
 var testAddTodo = function testAddTodo() {
   var stateBefore = [];
   var action = {
@@ -4654,45 +4688,35 @@ var testAddTodo = function testAddTodo() {
   (0, _expect2.default)(todos(stateBefore, action)).toEqual(stateAfter);
 };
 
-var toggleTodo = function toggleTodo(todo) {
-  /* 辞書が凍結されているため書き換えは不可
-  todo.completed = !todo.completed;
-  return todo;
-  */
-  /* これでも良いが冗長
-  return {
-    id: todo.id,
-    text: todo.text,
-    completed: !todo.completed
-  };
-  */
-  /* ES6の記法: 第一引数のオブジェクトに第二引数以下のオブジェクトを追加、変更
-  return Object.assign({}, todo, {
-    completed: !todo.completed
-  });
-  */
-  // ...を利用した記法(ES7で取り込まれる予定だそうな)
-  return _extends({}, todo, {
-    completed: !todo.completed
-  });
-};
-
-// テスト
 var testToggleTodo = function testToggleTodo() {
-  var todoBefore = {
+  var stateBefore = [{
     id: 0,
     text: 'Learn Redux',
     completed: false
+  }, {
+    id: 1,
+    text: 'Go shopping',
+    completed: false
+  }];
+  var action = {
+    type: 'TOGGLE_TODO',
+    id: 1
   };
-  var todoAfter = {
+  ;
+  var stateAfter = [{
     id: 0,
     text: 'Learn Redux',
+    completed: false
+  }, {
+    id: 1,
+    text: 'Go shopping',
     completed: true
-  };
+  }];
 
-  (0, _deepFreeze2.default)(todoBefore);
+  (0, _deepFreeze2.default)(stateBefore);
+  (0, _deepFreeze2.default)(action);
 
-  (0, _expect2.default)(toggleTodo(todoBefore)).toEqual(todoAfter);
+  (0, _expect2.default)(todos(stateBefore, action)).toEqual(stateAfter);
 };
 
 testAddTodo();
