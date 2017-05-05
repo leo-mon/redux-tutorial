@@ -135,3 +135,13 @@ yarn add --dev deep-freeze  # オブジェクトを不変にするライブラ�
 > ひとまずmulticounters.jsへ分割してそこへ記述、それに伴いWebpackの設定も変更
 
 `concat()`, `slice()`, `...`:スプレッド演算子を活用して元のアレイを変更しない様にして扱っていく
+
+## Avoiding Object Mutations with Object.assign() and ...spread
+今度はオブジェクトを利用する際について、基本は前節と一緒
+
+> こちらもひとまず`todo.js`を作成して検証
+> ...の利用はまだfixされていない模様
+```
+yarn add --dev babel-plugin-transform-object-rest-spread
+```
+> したあと.bablercへプラグイン追加するとトランスコンパイルしてくれる

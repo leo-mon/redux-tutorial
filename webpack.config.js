@@ -1,7 +1,8 @@
 module.exports={
   entry: {
     app: "./src/app.js",
-    multicounters: "./src/multicounters.js"
+    multicounters: "./src/multicounters.js",
+    todo: "./src/todo.js"
   },
   output: {
     path: __dirname+"/dist",

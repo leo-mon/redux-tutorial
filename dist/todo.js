@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 122);
+/******/ 	return __webpack_require__(__webpack_require__.s = 123);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -4597,11 +4597,14 @@ module.exports = function deepFreeze (o) {
 /* 119 */,
 /* 120 */,
 /* 121 */,
-/* 122 */
+/* 122 */,
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _expect = __webpack_require__(23);
 
@@ -4613,76 +4616,49 @@ var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-var addCounter = function addCounter(list) {
-  /* listが凍結されているためpushは不可
-  list.push(0);
-  return list;
+var toggleTodo = function toggleTodo(todo) {
+  /* 辞書が凍結されているため書き換えは不可
+  todo.completed = !todo.completed;
+  return todo;
   */
-  /* return list.concat([0]); これでも良いがES6で書く */
-  return [].concat(_toConsumableArray(list), [0]);
-};
-
-var removeCounter = function removeCounter(list, index) {
-  /* 同様の理由でアウト
-  list.splice(index, 1);
-  return list;
+  /* これでも良いが冗長
+  return {
+    id: todo.id,
+    text: todo.text,
+    completed: !todo.completed
+  };
   */
-  /* これでも良いがES6で書く
-  return list
-    .slice(0, index)
-    .concat(list.slice(index + 1));
+  /* ES6の記法: 第一引数のオブジェクトに第二引数以下のオブジェクトを追加、変更
+  return Object.assign({}, todo, {
+    completed: !todo.completed
+  });
   */
-  return [].concat(_toConsumableArray(list.slice(0, index)), _toConsumableArray(list.slice(index + 1)));
+  // ...を利用した記法(ES7で取り込まれる予定だそうな)
+  return _extends({}, todo, {
+    completed: !todo.completed
+  });
 };
 
-var incrementCounter = function incrementCounter(list, index) {
-  /* 同様の理由でアウト
-  list[index]++;
-  return list;
-  */
-  /* これでも良いがES6で書く
-  return list
-    .slice(0, index)
-    .concat(list[index] + 1)
-    .concat(list.slice(index + 1));
-  */
-  return [].concat(_toConsumableArray(list.slice(0, index)), [list[index] + 1], _toConsumableArray(list.slice(index + 1)));
+// テスト
+var testToggleTodo = function testToggleTodo() {
+  var todoBefore = {
+    id: 0,
+    text: 'Learn Redux',
+    completed: false
+  };
+  var todoAfter = {
+    id: 0,
+    text: 'Learn Redux',
+    completed: true
+  };
+
+  (0, _deepFreeze2.default)(todoBefore);
+
+  (0, _expect2.default)(toggleTodo(todoBefore)).toEqual(todoAfter);
 };
 
-/* テスト */
-var testAddCounter = function testAddCounter() {
-  var listBefore = [];
-  var listAfter = [0];
-
-  (0, _deepFreeze2.default)(listBefore); // テストのためにリストを凍結
-
-  (0, _expect2.default)(addCounter(listBefore)).toEqual(listAfter);
-};
-
-var testRemoveCounter = function testRemoveCounter() {
-  var listBefore = [0, 10, 20];
-  var listAfter = [0, 20];
-
-  (0, _deepFreeze2.default)(listBefore);
-
-  (0, _expect2.default)(removeCounter(listBefore, 1)).toEqual(listAfter);
-};
-
-var testIncrementCounter = function testIncrementCounter() {
-  var listBefore = [0, 10, 20];
-  var listAfter = [0, 11, 20];
-
-  (0, _deepFreeze2.default)(listBefore);
-
-  (0, _expect2.default)(incrementCounter(listBefore, 1)).toEqual(listAfter);
-};
-
-testAddCounter();
-testRemoveCounter();
-testIncrementCounter();
-console.log('All tests passed.');
+testToggleTodo();
+console.log('All test passed.');
 
 /***/ })
 /******/ ]);
