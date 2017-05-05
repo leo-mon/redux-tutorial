@@ -1,5 +1,6 @@
 import expect from 'expect'
 import deepFreeze from 'deep-freeze'
+import { createStore } from 'redux'
 
 // Reducer
 // 個々の要素をいじるReducer
@@ -40,31 +41,79 @@ const todos = (state = [], action) => {
   }
 };
 
-const toggleTodo = (todo) => {
-  /* 辞書が凍結されているため書き換えは不可
-  todo.completed = !todo.completed;
-  return todo;
-  */
-  /* これでも良いが冗長
+// 見えるかどうかのフラグ処理のReducer
+const visibilityFilter = (
+  state = 'SHOW_ALL', // 初期値
+  action
+) => {
+  switch (action.type) {
+    case 'SET_VISIBILITY_FILTER':
+      return action.filter;
+    default:
+      return state;
+  }
+};
+
+// トップレベルのReducer
+const todoApp = (state = {}, action) => {
   return {
-  id: todo.id,
-  text: todo.text,
-  completed: !todo.completed
+    todos: todos(
+      state.todos,
+      action
+    ),
+    visibilityFilter: visibilityFilter(
+      state.visibilityFilter,
+      action
+    )
+  };
 };
-*/
-/* ES6の記法: 第一引数のオブジェクトに第二引数以下のオブジェクトを追加、変更
-return Object.assign({}, todo, {
-completed: !todo.completed
+
+// const store = createStore(todos);
+const store = createStore(todoApp);
+
+console.log('Initial state:');
+console.log(store.getState());
+console.log('--------------');
+
+console.log('Dispatching ADD_TODO.');
+store.dispatch({
+  type: 'ADD_TODO',
+  id: 0,
+  text: 'Learn Redux'
 });
-*/
-// ...を利用した記法(ES7で取り込まれる予定だそうな)
-return {
-  ...todo,
-  completed: !todo.completed
-};
-};
+console.log('Current state:');
+console.log(store.getState());
+console.log('--------------');
 
+console.log('Dispatching ADD_TODO.');
+store.dispatch({
+  type: 'ADD_TODO',
+  id: 1,
+  text: 'Go shopping'
+});
+console.log('Current state:');
+console.log(store.getState());
+console.log('--------------');
 
+console.log('Dispatching TOGGLE_TODO.');
+store.dispatch({
+  type: 'TOGGLE_TODO',
+  id: 0,
+});
+console.log('Current state:');
+console.log(store.getState());
+console.log('--------------');
+
+console.log('Dispatching SET_VISIBILITY_FILTER.');
+store.dispatch({
+  type: 'SET_VISIBILITY_FILTER',
+  filter: 'SHOW_COMPLETED',
+});
+console.log('Current state:');
+console.log(store.getState());
+console.log('--------------');
+
+console.log('');
 
 // テスト
 const testAddTodo = () => {

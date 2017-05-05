@@ -167,3 +167,10 @@ todos -> todoへの移設
 
 いじるState Tree が違う場合そのレベルごとにReducerを分割して上から呼ぶ様にする（Reducer Composition）
 こうすることでアプリケーションが複雑になってきた時管理しやすくなる（意訳
+
+## Reducer Composition with Objects
+> のっけからconsole.logの嵐: 動作がこれでわかる
+
+より多くの情報を詰め込みたい場合: 他にもReducerを定義して、これらを子要素にもつ親Reducerを作成する(時間ないので意訳)
+
+> actionは全要素に伝わる: 定義されてない時は要素をそのまま返す必要がある、というわけか...
