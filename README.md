@@ -145,3 +145,8 @@ yarn add --dev deep-freeze  # オブジェクトを不変にするライブラ�
 yarn add --dev babel-plugin-transform-object-rest-spread
 ```
 > したあと.bablercへプラグイン追加するとトランスコンパイルしてくれる
+
+
+## Writing a Todo List Reducer (Adding a Todo)
+> 引き続き`todo.js`へ追記していく方向で（toggleTodoは参考に残しておく...おそらくこの後Reducerに実装されるだおうけど
+> 前節を参考にReducerを実装していく、特筆すべき点はなし

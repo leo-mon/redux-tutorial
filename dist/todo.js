@@ -4616,6 +4616,44 @@ var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+// Reducer
+var todos = function todos() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var action = arguments[1];
+
+  switch (action.type) {
+    case 'ADD_TODO':
+      return [].concat(_toConsumableArray(state), [{
+        id: action.id,
+        text: action.text,
+        completed: false
+      }]);
+    default:
+      return state;
+  }
+};
+
+var testAddTodo = function testAddTodo() {
+  var stateBefore = [];
+  var action = {
+    type: 'ADD_TODO',
+    id: 0,
+    text: 'Learn Redux'
+  };
+  var stateAfter = [{
+    id: 0,
+    text: 'Learn Redux',
+    completed: false
+  }];
+
+  (0, _deepFreeze2.default)(stateBefore);
+  (0, _deepFreeze2.default)(action);
+
+  (0, _expect2.default)(todos(stateBefore, action)).toEqual(stateAfter);
+};
+
 var toggleTodo = function toggleTodo(todo) {
   /* 辞書が凍結されているため書き換えは不可
   todo.completed = !todo.completed;
@@ -4657,6 +4695,7 @@ var testToggleTodo = function testToggleTodo() {
   (0, _expect2.default)(toggleTodo(todoBefore)).toEqual(todoAfter);
 };
 
+testAddTodo();
 testToggleTodo();
 console.log('All test passed.');
 
