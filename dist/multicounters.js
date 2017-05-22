@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 122);
+/******/ 	return __webpack_require__(__webpack_require__.s = 137);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -275,7 +275,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _objectInspect = __webpack_require__(50);
+var _objectInspect = __webpack_require__(52);
 
 var _objectInspect2 = _interopRequireDefault(_objectInspect);
 
@@ -317,6 +317,33 @@ module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 /* 13 */,
 /* 14 */,
 /* 15 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -334,7 +361,7 @@ var _has = __webpack_require__(11);
 
 var _has2 = _interopRequireDefault(_has);
 
-var _tmatch = __webpack_require__(56);
+var _tmatch = __webpack_require__(61);
 
 var _tmatch2 = _interopRequireDefault(_tmatch);
 
@@ -342,9 +369,9 @@ var _assert = __webpack_require__(9);
 
 var _assert2 = _interopRequireDefault(_assert);
 
-var _SpyUtils = __webpack_require__(16);
+var _SpyUtils = __webpack_require__(17);
 
-var _TestUtils = __webpack_require__(17);
+var _TestUtils = __webpack_require__(18);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -732,7 +759,7 @@ for (var alias in aliases) {
 }exports.default = Expectation;
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -749,7 +776,7 @@ var _assert = __webpack_require__(9);
 
 var _assert2 = _interopRequireDefault(_assert);
 
-var _TestUtils = __webpack_require__(17);
+var _TestUtils = __webpack_require__(18);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -859,7 +886,7 @@ var spyOn = exports.spyOn = function spyOn(object, methodName) {
 };
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -872,7 +899,7 @@ exports.stringContains = exports.objectContains = exports.arrayContains = export
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var _isRegex = __webpack_require__(19);
+var _isRegex = __webpack_require__(20);
 
 var _isRegex2 = _interopRequireDefault(_isRegex);
 
@@ -880,7 +907,7 @@ var _why = __webpack_require__(45);
 
 var _why2 = _interopRequireDefault(_why);
 
-var _objectKeys = __webpack_require__(21);
+var _objectKeys = __webpack_require__(22);
 
 var _objectKeys2 = _interopRequireDefault(_objectKeys);
 
@@ -1011,7 +1038,7 @@ var stringContains = exports.stringContains = function stringContains(string, va
 };
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1057,7 +1084,7 @@ module.exports = function isCallable(value) {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1103,7 +1130,7 @@ module.exports = function isRegex(value) {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1137,7 +1164,7 @@ if (hasSymbols) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1147,7 +1174,7 @@ if (hasSymbols) {
 var has = Object.prototype.hasOwnProperty;
 var toStr = Object.prototype.toString;
 var slice = Array.prototype.slice;
-var isArgs = __webpack_require__(51);
+var isArgs = __webpack_require__(53);
 var isEnumerable = Object.prototype.propertyIsEnumerable;
 var hasDontEnumBug = !isEnumerable.call({ toString: null }, 'toString');
 var hasProtoEnumBug = isEnumerable.call(function () {}, 'prototype');
@@ -1284,18 +1311,18 @@ module.exports = keysShim;
 
 
 /***/ }),
-/* 22 */,
-/* 23 */
+/* 23 */,
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _Expectation = __webpack_require__(15);
+var _Expectation = __webpack_require__(16);
 
 var _Expectation2 = _interopRequireDefault(_Expectation);
 
-var _SpyUtils = __webpack_require__(16);
+var _SpyUtils = __webpack_require__(17);
 
 var _assert = __webpack_require__(9);
 
@@ -1321,36 +1348,9 @@ expect.extend = _extend2.default;
 module.exports = expect;
 
 /***/ }),
-/* 24 */,
 /* 25 */,
 /* 26 */,
-/* 27 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
+/* 27 */,
 /* 28 */,
 /* 29 */,
 /* 30 */,
@@ -3269,7 +3269,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(27)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)))
 
 /***/ }),
 /* 33 */
@@ -3278,7 +3278,7 @@ function isnan (val) {
 "use strict";
 
 
-var keys = __webpack_require__(21);
+var keys = __webpack_require__(22);
 var foreach = __webpack_require__(36);
 var hasSymbols = typeof Symbol === 'function' && typeof Symbol() === 'symbol';
 
@@ -3345,7 +3345,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Expectation = __webpack_require__(15);
+var _Expectation = __webpack_require__(16);
 
 var _Expectation2 = _interopRequireDefault(_Expectation);
 
@@ -3554,7 +3554,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 "use strict";
 
 
-var isCallable = __webpack_require__(18);
+var isCallable = __webpack_require__(19);
 var fnToStr = Function.prototype.toString;
 var isNonArrowFnRegex = /^\s*function/;
 var isArrowFnWithParensRegex = /^\([^\)]*\) *=>/;
@@ -3663,7 +3663,7 @@ module.exports = function () {
 "use strict";
 
 
-var isSymbol = __webpack_require__(20);
+var isSymbol = __webpack_require__(21);
 
 module.exports = function getSymbolIterator() {
 	var symbolIterator = typeof Symbol === 'function' && isSymbol(Symbol.iterator) ? Symbol.iterator : null;
@@ -3696,10 +3696,10 @@ var isBoolean = __webpack_require__(41);
 var isDate = __webpack_require__(42);
 var isGenerator = __webpack_require__(46);
 var isNumber = __webpack_require__(47);
-var isRegex = __webpack_require__(19);
+var isRegex = __webpack_require__(20);
 var isString = __webpack_require__(48);
-var isSymbol = __webpack_require__(20);
-var isCallable = __webpack_require__(18);
+var isSymbol = __webpack_require__(21);
+var isCallable = __webpack_require__(19);
 
 var isProto = Object.prototype.isPrototypeOf;
 
@@ -4085,7 +4085,9 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 50 */
+/* 50 */,
+/* 51 */,
+/* 52 */
 /***/ (function(module, exports) {
 
 var hasMap = typeof Map === 'function' && Map.prototype;
@@ -4323,7 +4325,7 @@ function collectionOf(type, size, entries) {
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4347,11 +4349,14 @@ module.exports = function isArguments(value) {
 
 
 /***/ }),
-/* 52 */,
-/* 53 */,
 /* 54 */,
 /* 55 */,
-/* 56 */
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */,
+/* 60 */,
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4513,7 +4518,7 @@ function match_ (obj, pattern, ca, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(32).Buffer))
 
 /***/ }),
-/* 57 */
+/* 62 */
 /***/ (function(module, exports) {
 
 module.exports = function deepFreeze (o) {
@@ -4533,11 +4538,6 @@ module.exports = function deepFreeze (o) {
 
 
 /***/ }),
-/* 58 */,
-/* 59 */,
-/* 60 */,
-/* 61 */,
-/* 62 */,
 /* 63 */,
 /* 64 */,
 /* 65 */,
@@ -4597,17 +4597,32 @@ module.exports = function deepFreeze (o) {
 /* 119 */,
 /* 120 */,
 /* 121 */,
-/* 122 */
+/* 122 */,
+/* 123 */,
+/* 124 */,
+/* 125 */,
+/* 126 */,
+/* 127 */,
+/* 128 */,
+/* 129 */,
+/* 130 */,
+/* 131 */,
+/* 132 */,
+/* 133 */,
+/* 134 */,
+/* 135 */,
+/* 136 */,
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _expect = __webpack_require__(23);
+var _expect = __webpack_require__(24);
 
 var _expect2 = _interopRequireDefault(_expect);
 
-var _deepFreeze = __webpack_require__(57);
+var _deepFreeze = __webpack_require__(62);
 
 var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
 

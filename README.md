@@ -174,3 +174,10 @@ todos -> todoへの移設
 より多くの情報を詰め込みたい場合: 他にもReducerを定義して、これらを子要素にもつ親Reducerを作成する(時間ないので意訳)
 
 > actionは全要素に伝わる: 定義されてない時は要素をそのまま返す必要がある、というわけか...
+
+> state: 'SHOW_ALL'と宣言してしまい詰まってしまった, state = が正解
+
+## Reducer Composition with combineReducers()
+前節の様に独立したReducerを異なるStateTreeへ作用させ、合体させる手法はよく取られる。  
+そのためこのメソッドがReduxから提供されている。（`combineReducers`）  　　
+todoAppをこれを用いて書き直す

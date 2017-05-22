@@ -1,6 +1,6 @@
 import expect from 'expect'
 import deepFreeze from 'deep-freeze'
-import { createStore } from 'redux'
+import { createStore, combineReducers } from 'redux'
 
 // Reducer
 // 個々の要素をいじるReducer
@@ -55,6 +55,7 @@ const visibilityFilter = (
 };
 
 // トップレベルのReducer
+/* これをReduxから提供されている関数へ置き換える
 const todoApp = (state = {}, action) => {
   return {
     todos: todos(
@@ -67,6 +68,17 @@ const todoApp = (state = {}, action) => {
     )
   };
 };
+*/
+/* こう書いても良いがES6のショートハンドを利用できる
+const todoApp = combineReducers({
+  todos: todos,
+  visibilityFilter: visibilityFilter
+})
+*/
+const todoApp = combineReducers({
+  todos,
+  visibilityFilter
+})
 
 // const store = createStore(todos);
 const store = createStore(todoApp);
