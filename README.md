@@ -181,3 +181,34 @@ todos -> todoへの移設
 前節の様に独立したReducerを異なるStateTreeへ作用させ、合体させる手法はよく取られる。  
 そのためこのメソッドがReduxから提供されている。（`combineReducers`）  　　
 todoAppをこれを用いて書き直す
+
+
+## Implementing combineReducers() from Scratch
+combineReducers()をスクラッチでインプリして見る
+
+- `Object.keys()`メソッド: アレイのキーを順に並べて返す
+  ```javascript
+  var arr = ['a', 'b', 'c'];
+  console.log(Object.keys(arr)); // console: ['0', '1', '2']
+
+  // array like object
+  var obj = { 0: 'a', 1: 'b', 2: 'c' };
+  console.log(Object.keys(obj)); // console: ['0', '1', '2']
+  ```
+
+- `reduce()`メソッド: 隣り合う2つの要素に左から順に関数を適用する
+  ```javascript
+  [0,1,2,3,4].reduce(function(previousValue, currentValue, index, array){
+    return previousValue + currentValue;
+  });
+  /*
+  最初はpreviouseVulue:0, currentValue:1. 0+1=1が次のpreviouseVulue.
+  2回目はpreviouseVulue:1, currentValue:2 . 1+2=3が次のpreviouseVulue.
+  ...
+  最終的に全ての合計値10が返る.
+  */
+  ```
+
+  https://stackoverflow.com/questions/15748656/javascript-reduce-on-object　がわかりやすい  
+  best answerの例の、初期値0を外すと結果がa23になる  
+  今回は初期値に{}を指定して、keyをインクリメントして行くように振舞わせてる  

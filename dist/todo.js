@@ -5637,6 +5637,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
+// この節の目的としてcombineReducersを手で実装する
+var combineReducers = function combineReducers(reducers) {
+  return function () {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var action = arguments[1];
+
+    return Object.keys(reducers).reduce( // keys()で['todos','visibilityFilter']を返して、reduceへ
+    function (nextState, key) {
+      nextState[key] = reducers[key](state[key], action);
+      return nextState;
+    }, {} // reduceの初期値に空アレイ、これにより初回はnextState={}, key='todos'
+    );
+  };
+};
+
 // Reducer
 // 個々の要素をいじるReducer
 var todo = function todo(state, action) {
@@ -5713,7 +5728,7 @@ const todoApp = combineReducers({
   visibilityFilter: visibilityFilter
 })
 */
-var todoApp = (0, _redux.combineReducers)({
+var todoApp = combineReducers({
   todos: todos,
   visibilityFilter: visibilityFilter
 });

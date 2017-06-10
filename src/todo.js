@@ -1,6 +1,23 @@
 import expect from 'expect'
 import deepFreeze from 'deep-freeze'
-import { createStore, combineReducers } from 'redux'
+import { createStore, /* combineReducers */ } from 'redux'
+
+// この節の目的としてcombineReducersを手で実装する
+const combineReducers = (reducers) => {
+  return (state ={}, action) => {
+    return Object.keys(reducers).reduce( // keys()で['todos','visibilityFilter']を返して、reduceへ
+      (nextState, key) => {
+        nextState[key] = reducers[key](
+          state[key],
+          action
+        );
+        return nextState;
+      },
+      {} // reduceの初期値に空アレイ、これにより初回はnextState={}, key='todos'
+    );
+  };
+};
+
 
 // Reducer
 // 個々の要素をいじるReducer
