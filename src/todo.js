@@ -1,23 +1,8 @@
 import expect from 'expect'
 import deepFreeze from 'deep-freeze'
-import { createStore, /* combineReducers */ } from 'redux'
-
-// この節の目的としてcombineReducersを手で実装する
-const combineReducers = (reducers) => {
-  return (state ={}, action) => {
-    return Object.keys(reducers).reduce( // keys()で['todos','visibilityFilter']を返して、reduceへ
-      (nextState, key) => {
-        nextState[key] = reducers[key](
-          state[key],
-          action
-        );
-        return nextState;
-      },
-      {} // reduceの初期値に空アレイ、これにより初回はnextState={}, key='todos'
-    );
-  };
-};
-
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+import { createStore, combineReducers } from 'redux'
 
 // Reducer
 // 個々の要素をいじるReducer
@@ -33,7 +18,6 @@ const todo = (state, action) => {
       if (state.id !== action.id) {
         return state;
       }
-
       return {
         ...state,
         completed: !state.completed
@@ -46,11 +30,13 @@ const todo = (state, action) => {
 // リスト全体をいじるReducer
 const todos = (state = [], action) => {
   switch (action.type) {
+    // stateに {id:action.id,text:action.text,completed:false}を追加する
     case 'ADD_TODO':
       return [
         ...state,
-        todo(undefined, action)  // ADDはそのままでよかったのでは？
+        todo(undefined, action)  // todoをコールし返ってきた値とstateを結合
       ];
+    // 該当するToDoのcompletedの値をを反転
     case 'TOGGLE_TODO':
       return state.map(t => todo(t, action));
     default:
@@ -72,34 +58,62 @@ const visibilityFilter = (
 };
 
 // トップレベルのReducer
-/* これをReduxから提供されている関数へ置き換える
-const todoApp = (state = {}, action) => {
-  return {
-    todos: todos(
-      state.todos,
-      action
-    ),
-    visibilityFilter: visibilityFilter(
-      state.visibilityFilter,
-      action
-    )
-  };
-};
-*/
-/* こう書いても良いがES6のショートハンドを利用できる
-const todoApp = combineReducers({
-  todos: todos,
-  visibilityFilter: visibilityFilter
-})
-*/
 const todoApp = combineReducers({
   todos,
   visibilityFilter
 })
 
-// const store = createStore(todos);
+// ReducerをStoreに登録
 const store = createStore(todoApp);
 
+let nextTodoId = 0;  // action.idに利用するグローバル変数
+
+// TodoAppコンポーネント
+class TodoApp extends Component {
+  render() {
+    return (
+      <div>
+        <input ref={node => {  // Reactのref APIを利用、フォームの値取得
+          this.input = node;
+        }} />
+
+        <button onClick={() => {
+          store.dispatch({
+            type: 'ADD_TODO',
+            text: this.input.value,
+            id: nextTodoId++
+          })
+          this.input.value = '';
+        }}>
+          ADD_TODO
+        </button>
+
+        <ul>
+          {this.props.todos.map(todo =>  // propsとして受けたstoreの中身を表示
+            <li key={todo.id}>
+              {todo.text}
+            </li>
+          )}
+        </ul>
+      </div>
+    );
+  }
+}
+
+// ビュー関数
+const render = () => {
+  ReactDOM.render(
+    <TodoApp
+      todos={store.getState().todos}  //todosの状態をpropsとして渡す
+    />,
+    document.getElementById('root')
+  );
+};
+
+store.subscribe(render);
+render();
+
+/* 
 console.log('Initial state:');
 console.log(store.getState());
 console.log('--------------');
@@ -210,3 +224,4 @@ const testToggleTodo = () => {
 testAddTodo()
 testToggleTodo();
 console.log('All test passed.');
+*/
