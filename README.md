@@ -212,3 +212,19 @@ combineReducers()をスクラッチでインプリして見る
   https://stackoverflow.com/questions/15748656/javascript-reduce-on-object　がわかりやすい  
   best answerの例の、初期値0を外すと結果がa23になる  
   今回は初期値に{}を指定して、keyをインクリメントして行くように振舞わせてる  
+
+
+## React Todo List Example (Adding a Todo)
+React を用いたブラウザでのADD_TODOの描画
+
+> todo.htmlを作成してそこで作業
+
+> refを使うと直接コンポーネントを触りに行ける
+  今回はnodeという名前をinputに付与してアクセスしている（と思う）
+> あとはソースコードコメント参照、これまでのテスト類はコメントアウト
+
+## React Todo List Example (Toggling a Todo)
+前節同様こんどはTOGGLE_TODOの描画実装
+
+> 素直、こちらもソースコード読めばわかる
+

@@ -90,7 +90,19 @@ class TodoApp extends Component {
 
         <ul>
           {this.props.todos.map(todo =>  // propsとして受けたstoreの中身を表示
-            <li key={todo.id}>
+            <li key={todo.id}
+                onClick={() => {  // クリックされたらTOGGLE_TODOをdispatch()
+                  store.dispatch({
+                    type: 'TOGGLE_TODO',
+                    id: todo.id
+                  });
+                }}
+                style={{  // completedがtureなら打ち消し線を入れる
+                  textDecoration:
+                    todo.completed ?
+                      'line-through':
+                      'none'
+                }}>
               {todo.text}
             </li>
           )}

@@ -14948,7 +14948,17 @@ var TodoApp = function (_Component) {
             return (// propsとして受けたstoreの中身を表示
               _react2.default.createElement(
                 'li',
-                { key: todo.id },
+                { key: todo.id,
+                  onClick: function onClick() {
+                    // クリックされたらTOGGLE_TODOをdispatch()
+                    store.dispatch({
+                      type: 'TOGGLE_TODO',
+                      id: todo.id
+                    });
+                  },
+                  style: { // completedがtureなら打ち消し線を入れる
+                    textDecoration: todo.completed ? 'line-through' : 'none'
+                  } },
                 todo.text
               )
             );
