@@ -228,3 +228,9 @@ React を用いたブラウザでのADD_TODOの描画
 
 > 素直、こちらもソースコード読めばわかる
 
+## React Todo List Example (Filtering Todos)
+Todoについて、すべて、完了したもの、未完了なものの表示をvisiblityFilterを利用して出し分ける
+
+> だいぶ追加。childrenの使い方に注意。
+
+

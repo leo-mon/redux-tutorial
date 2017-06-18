@@ -63,11 +63,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 137);
+/******/ 	return __webpack_require__(__webpack_require__.s = 236);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -257,15 +258,192 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */
+
+/***/ 116:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process, Buffer) {
+
+function isArguments (obj) {
+  return Object.prototype.toString.call(obj) === '[object Arguments]'
+}
+
+module.exports = match
+
+function match (obj, pattern) {
+  return match_(obj, pattern, [], [])
+}
+
+/* istanbul ignore next */
+var log = (/\btmatch\b/.test(process.env.NODE_DEBUG || '')) ?
+  console.error : function () {}
+
+function match_ (obj, pattern, ca, cb) {
+  log('TMATCH', typeof obj, pattern)
+  if (obj == pattern) {
+    log('TMATCH same object or simple value, or problem')
+    // if one is object, and the other isn't, then this is bogus
+    if (obj === null || pattern === null) {
+      return true
+
+    } else if (typeof obj === 'object' && typeof pattern === 'object') {
+      return true
+
+    } else if (typeof obj === 'object' && typeof pattern !== 'object') {
+      return false
+
+    } else if (typeof obj !== 'object' && typeof pattern === 'object') {
+      return false
+
+    } else {
+      return true
+    }
+
+  } else if (obj === null || pattern === null) {
+    log('TMATCH null test, already failed ==')
+    return false
+
+  } else if (typeof obj === 'string' && pattern instanceof RegExp) {
+    log('TMATCH string~=regexp test')
+    return pattern.test(obj)
+
+  } else if (typeof obj === 'string' && typeof pattern === 'string' && pattern) {
+    log('TMATCH string~=string test')
+    return obj.indexOf(pattern) !== -1
+
+  } else if (obj instanceof Date && pattern instanceof Date) {
+    log('TMATCH date test')
+    return obj.getTime() === pattern.getTime()
+
+  } else if (obj instanceof Date && typeof pattern === 'string') {
+    log('TMATCH date~=string test')
+    return obj.getTime() === new Date(pattern).getTime()
+
+  } else if (isArguments(obj) || isArguments(pattern)) {
+    log('TMATCH arguments test')
+    var slice = Array.prototype.slice
+    return match_(slice.call(obj), slice.call(pattern), ca, cb)
+
+  } else if (pattern === Buffer) {
+    log('TMATCH Buffer ctor')
+    return Buffer.isBuffer(obj)
+
+  } else if (pattern === Function) {
+    log('TMATCH Function ctor')
+    return typeof obj === 'function'
+
+  } else if (pattern === Number) {
+    log('TMATCH Number ctor (finite, not NaN)')
+    return typeof obj === 'number' && obj === obj && isFinite(obj)
+
+  } else if (pattern !== pattern) {
+    log('TMATCH NaN')
+    return obj !== obj
+
+  } else if (pattern === String) {
+    log('TMATCH String ctor')
+    return typeof obj === 'string'
+
+  } else if (pattern === Boolean) {
+    log('TMATCH Boolean ctor')
+    return typeof obj === 'boolean'
+
+  } else if (pattern === Array) {
+    log('TMATCH Array ctor', pattern, Array.isArray(obj))
+    return Array.isArray(obj)
+
+  } else if (typeof pattern === 'function' && typeof obj === 'object') {
+    log('TMATCH object~=function')
+    return obj instanceof pattern
+
+  } else if (typeof obj !== 'object' || typeof pattern !== 'object') {
+    log('TMATCH obj is not object, pattern is not object, false')
+    return false
+
+  } else if (obj instanceof RegExp && pattern instanceof RegExp) {
+    log('TMATCH regexp~=regexp test')
+    return obj.source === pattern.source &&
+      obj.global === pattern.global &&
+      obj.multiline === pattern.multiline &&
+      obj.lastIndex === pattern.lastIndex &&
+      obj.ignoreCase === pattern.ignoreCase
+
+  } else if (Buffer.isBuffer(obj) && Buffer.isBuffer(pattern)) {
+    log('TMATCH buffer test')
+    if (obj.equals) {
+      return obj.equals(pattern)
+    } else {
+      if (obj.length !== pattern.length) return false
+
+      for (var j = 0; j < obj.length; j++) if (obj[j] != pattern[j]) return false
+
+      return true
+    }
+
+  } else {
+    // both are objects.  interesting case!
+    log('TMATCH object~=object test')
+    var kobj = Object.keys(obj)
+    var kpat = Object.keys(pattern)
+    log('  TMATCH patternkeys=%j objkeys=%j', kpat, kobj)
+
+    // don't bother with stack acrobatics if there's nothing there
+    if (kobj.length === 0 && kpat.length === 0) return true
+
+    // if we've seen this exact pattern and object already, then
+    // it means that pattern and obj have matching cyclicalness
+    // however, non-cyclical patterns can match cyclical objects
+    log('  TMATCH check seen objects...')
+    var cal = ca.length
+    while (cal--) if (ca[cal] === obj && cb[cal] === pattern) return true
+    ca.push(obj); cb.push(pattern)
+    log('  TMATCH not seen previously')
+
+    var key
+    for (var l = kpat.length - 1; l >= 0; l--) {
+      key = kpat[l]
+      log('  TMATCH test obj[%j]', key, obj[key], pattern[key])
+      if (!match_(obj[key], pattern[key], ca, cb)) return false
+    }
+
+    ca.pop()
+    cb.pop()
+
+    log('  TMATCH object pass')
+    return true
+  }
+
+  /* istanbul ignore next */
+  throw new Error('impossible to reach this point')
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(62).Buffer))
+
+/***/ }),
+
+/***/ 117:
+/***/ (function(module, exports) {
+
+module.exports = function deepFreeze (o) {
+  Object.freeze(o);
+
+  Object.getOwnPropertyNames(o).forEach(function (prop) {
+    if (o.hasOwnProperty(prop)
+    && o[prop] !== null
+    && (typeof o[prop] === "object" || typeof o[prop] === "function")
+    && !Object.isFrozen(o[prop])) {
+      deepFreeze(o[prop]);
+    }
+  });
+  
+  return o;
+};
+
+
+/***/ }),
+
+/***/ 20:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -275,7 +453,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _objectInspect = __webpack_require__(52);
+var _objectInspect = __webpack_require__(84);
 
 var _objectInspect2 = _interopRequireDefault(_objectInspect);
 
@@ -303,20 +481,107 @@ var assert = function assert(condition, createMessage) {
 exports.default = assert;
 
 /***/ }),
-/* 10 */,
-/* 11 */
+
+/***/ 22:
 /***/ (function(module, exports, __webpack_require__) {
 
-var bind = __webpack_require__(38);
+var bind = __webpack_require__(70);
 
 module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 
 
 /***/ }),
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */
+
+/***/ 236:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _expect = __webpack_require__(42);
+
+var _expect2 = _interopRequireDefault(_expect);
+
+var _deepFreeze = __webpack_require__(117);
+
+var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+var addCounter = function addCounter(list) {
+  /* listが凍結されているためpushは不可
+  list.push(0);
+  return list;
+  */
+  /* return list.concat([0]); これでも良いがES6で書く */
+  return [].concat(_toConsumableArray(list), [0]);
+};
+
+var removeCounter = function removeCounter(list, index) {
+  /* 同様の理由でアウト
+  list.splice(index, 1);
+  return list;
+  */
+  /* これでも良いがES6で書く
+  return list
+    .slice(0, index)
+    .concat(list.slice(index + 1));
+  */
+  return [].concat(_toConsumableArray(list.slice(0, index)), _toConsumableArray(list.slice(index + 1)));
+};
+
+var incrementCounter = function incrementCounter(list, index) {
+  /* 同様の理由でアウト
+  list[index]++;
+  return list;
+  */
+  /* これでも良いがES6で書く
+  return list
+    .slice(0, index)
+    .concat(list[index] + 1)
+    .concat(list.slice(index + 1));
+  */
+  return [].concat(_toConsumableArray(list.slice(0, index)), [list[index] + 1], _toConsumableArray(list.slice(index + 1)));
+};
+
+/* テスト */
+var testAddCounter = function testAddCounter() {
+  var listBefore = [];
+  var listAfter = [0];
+
+  (0, _deepFreeze2.default)(listBefore); // テストのためにリストを凍結
+
+  (0, _expect2.default)(addCounter(listBefore)).toEqual(listAfter);
+};
+
+var testRemoveCounter = function testRemoveCounter() {
+  var listBefore = [0, 10, 20];
+  var listAfter = [0, 20];
+
+  (0, _deepFreeze2.default)(listBefore);
+
+  (0, _expect2.default)(removeCounter(listBefore, 1)).toEqual(listAfter);
+};
+
+var testIncrementCounter = function testIncrementCounter() {
+  var listBefore = [0, 10, 20];
+  var listAfter = [0, 11, 20];
+
+  (0, _deepFreeze2.default)(listBefore);
+
+  (0, _expect2.default)(incrementCounter(listBefore, 1)).toEqual(listAfter);
+};
+
+testAddCounter();
+testRemoveCounter();
+testIncrementCounter();
+console.log('All tests passed.');
+
+/***/ }),
+
+/***/ 34:
 /***/ (function(module, exports) {
 
 var g;
@@ -343,7 +608,8 @@ module.exports = g;
 
 
 /***/ }),
-/* 16 */
+
+/***/ 35:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -357,21 +623,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _has = __webpack_require__(11);
+var _has = __webpack_require__(22);
 
 var _has2 = _interopRequireDefault(_has);
 
-var _tmatch = __webpack_require__(61);
+var _tmatch = __webpack_require__(116);
 
 var _tmatch2 = _interopRequireDefault(_tmatch);
 
-var _assert = __webpack_require__(9);
+var _assert = __webpack_require__(20);
 
 var _assert2 = _interopRequireDefault(_assert);
 
-var _SpyUtils = __webpack_require__(17);
+var _SpyUtils = __webpack_require__(36);
 
-var _TestUtils = __webpack_require__(18);
+var _TestUtils = __webpack_require__(37);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -759,7 +1025,8 @@ for (var alias in aliases) {
 }exports.default = Expectation;
 
 /***/ }),
-/* 17 */
+
+/***/ 36:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -770,13 +1037,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.spyOn = exports.createSpy = exports.restoreSpies = exports.isSpy = undefined;
 
-var _defineProperties = __webpack_require__(33);
+var _defineProperties = __webpack_require__(63);
 
-var _assert = __webpack_require__(9);
+var _assert = __webpack_require__(20);
 
 var _assert2 = _interopRequireDefault(_assert);
 
-var _TestUtils = __webpack_require__(18);
+var _TestUtils = __webpack_require__(37);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -886,7 +1153,8 @@ var spyOn = exports.spyOn = function spyOn(object, methodName) {
 };
 
 /***/ }),
-/* 18 */
+
+/***/ 37:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -899,15 +1167,15 @@ exports.stringContains = exports.objectContains = exports.arrayContains = export
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var _isRegex = __webpack_require__(20);
+var _isRegex = __webpack_require__(39);
 
 var _isRegex2 = _interopRequireDefault(_isRegex);
 
-var _why = __webpack_require__(45);
+var _why = __webpack_require__(77);
 
 var _why2 = _interopRequireDefault(_why);
 
-var _objectKeys = __webpack_require__(22);
+var _objectKeys = __webpack_require__(41);
 
 var _objectKeys2 = _interopRequireDefault(_objectKeys);
 
@@ -1038,7 +1306,8 @@ var stringContains = exports.stringContains = function stringContains(string, va
 };
 
 /***/ }),
-/* 19 */
+
+/***/ 38:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1084,13 +1353,14 @@ module.exports = function isCallable(value) {
 
 
 /***/ }),
-/* 20 */
+
+/***/ 39:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var has = __webpack_require__(11);
+var has = __webpack_require__(22);
 var regexExec = RegExp.prototype.exec;
 var gOPD = Object.getOwnPropertyDescriptor;
 
@@ -1130,7 +1400,8 @@ module.exports = function isRegex(value) {
 
 
 /***/ }),
-/* 21 */
+
+/***/ 40:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1164,7 +1435,8 @@ if (hasSymbols) {
 
 
 /***/ }),
-/* 22 */
+
+/***/ 41:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1174,7 +1446,7 @@ if (hasSymbols) {
 var has = Object.prototype.hasOwnProperty;
 var toStr = Object.prototype.toString;
 var slice = Array.prototype.slice;
-var isArgs = __webpack_require__(53);
+var isArgs = __webpack_require__(85);
 var isEnumerable = Object.prototype.propertyIsEnumerable;
 var hasDontEnumBug = !isEnumerable.call({ toString: null }, 'toString');
 var hasProtoEnumBug = isEnumerable.call(function () {}, 'prototype');
@@ -1311,24 +1583,24 @@ module.exports = keysShim;
 
 
 /***/ }),
-/* 23 */,
-/* 24 */
+
+/***/ 42:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _Expectation = __webpack_require__(16);
+var _Expectation = __webpack_require__(35);
 
 var _Expectation2 = _interopRequireDefault(_Expectation);
 
-var _SpyUtils = __webpack_require__(17);
+var _SpyUtils = __webpack_require__(36);
 
-var _assert = __webpack_require__(9);
+var _assert = __webpack_require__(20);
 
 var _assert2 = _interopRequireDefault(_assert);
 
-var _extend = __webpack_require__(34);
+var _extend = __webpack_require__(64);
 
 var _extend2 = _interopRequireDefault(_extend);
 
@@ -1348,13 +1620,8 @@ expect.extend = _extend2.default;
 module.exports = expect;
 
 /***/ }),
-/* 25 */,
-/* 26 */,
-/* 27 */,
-/* 28 */,
-/* 29 */,
-/* 30 */,
-/* 31 */
+
+/***/ 61:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1475,7 +1742,8 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 32 */
+
+/***/ 62:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1489,9 +1757,9 @@ function fromByteArray (uint8) {
 
 
 
-var base64 = __webpack_require__(31)
-var ieee754 = __webpack_require__(39)
-var isArray = __webpack_require__(49)
+var base64 = __webpack_require__(61)
+var ieee754 = __webpack_require__(71)
+var isArray = __webpack_require__(81)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -3269,17 +3537,18 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34)))
 
 /***/ }),
-/* 33 */
+
+/***/ 63:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var keys = __webpack_require__(22);
-var foreach = __webpack_require__(36);
+var keys = __webpack_require__(41);
+var foreach = __webpack_require__(68);
 var hasSymbols = typeof Symbol === 'function' && typeof Symbol() === 'symbol';
 
 var toStr = Object.prototype.toString;
@@ -3335,7 +3604,8 @@ module.exports = defineProperties;
 
 
 /***/ }),
-/* 34 */
+
+/***/ 64:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3345,7 +3615,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Expectation = __webpack_require__(16);
+var _Expectation = __webpack_require__(35);
 
 var _Expectation2 = _interopRequireDefault(_Expectation);
 
@@ -3366,8 +3636,8 @@ function extend(extension) {
 exports.default = extend;
 
 /***/ }),
-/* 35 */,
-/* 36 */
+
+/***/ 68:
 /***/ (function(module, exports) {
 
 
@@ -3395,7 +3665,8 @@ module.exports = function forEach (obj, fn, ctx) {
 
 
 /***/ }),
-/* 37 */
+
+/***/ 69:
 /***/ (function(module, exports) {
 
 var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
@@ -3449,16 +3720,18 @@ module.exports = function bind(that) {
 
 
 /***/ }),
-/* 38 */
+
+/***/ 70:
 /***/ (function(module, exports, __webpack_require__) {
 
-var implementation = __webpack_require__(37);
+var implementation = __webpack_require__(69);
 
 module.exports = Function.prototype.bind || implementation;
 
 
 /***/ }),
-/* 39 */
+
+/***/ 71:
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -3548,13 +3821,14 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 40 */
+
+/***/ 72:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var isCallable = __webpack_require__(19);
+var isCallable = __webpack_require__(38);
 var fnToStr = Function.prototype.toString;
 var isNonArrowFnRegex = /^\s*function/;
 var isArrowFnWithParensRegex = /^\([^\)]*\) *=>/;
@@ -3570,7 +3844,8 @@ module.exports = function isArrowFunction(fn) {
 
 
 /***/ }),
-/* 41 */
+
+/***/ 73:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3598,7 +3873,8 @@ module.exports = function isBoolean(value) {
 
 
 /***/ }),
-/* 42 */
+
+/***/ 74:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3625,7 +3901,8 @@ module.exports = function isDateObject(value) {
 
 
 /***/ }),
-/* 43 */
+
+/***/ 75:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3657,13 +3934,14 @@ module.exports = function () {
 
 
 /***/ }),
-/* 44 */
+
+/***/ 76:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var isSymbol = __webpack_require__(21);
+var isSymbol = __webpack_require__(40);
 
 module.exports = function getSymbolIterator() {
 	var symbolIterator = typeof Symbol === 'function' && isSymbol(Symbol.iterator) ? Symbol.iterator : null;
@@ -3681,7 +3959,8 @@ module.exports = function getSymbolIterator() {
 
 
 /***/ }),
-/* 45 */
+
+/***/ 77:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3690,16 +3969,16 @@ module.exports = function getSymbolIterator() {
 var ObjectPrototype = Object.prototype;
 var toStr = ObjectPrototype.toString;
 var booleanValue = Boolean.prototype.valueOf;
-var has = __webpack_require__(11);
-var isArrowFunction = __webpack_require__(40);
-var isBoolean = __webpack_require__(41);
-var isDate = __webpack_require__(42);
-var isGenerator = __webpack_require__(46);
-var isNumber = __webpack_require__(47);
-var isRegex = __webpack_require__(20);
-var isString = __webpack_require__(48);
-var isSymbol = __webpack_require__(21);
-var isCallable = __webpack_require__(19);
+var has = __webpack_require__(22);
+var isArrowFunction = __webpack_require__(72);
+var isBoolean = __webpack_require__(73);
+var isDate = __webpack_require__(74);
+var isGenerator = __webpack_require__(78);
+var isNumber = __webpack_require__(79);
+var isRegex = __webpack_require__(39);
+var isString = __webpack_require__(80);
+var isSymbol = __webpack_require__(40);
+var isCallable = __webpack_require__(38);
 
 var isProto = Object.prototype.isPrototypeOf;
 
@@ -3707,9 +3986,9 @@ var namedFoo = function foo() {};
 var functionsHaveNames = namedFoo.name === 'foo';
 
 var symbolValue = typeof Symbol === 'function' ? Symbol.prototype.valueOf : null;
-var symbolIterator = __webpack_require__(44)();
+var symbolIterator = __webpack_require__(76)();
 
-var collectionsForEach = __webpack_require__(43)();
+var collectionsForEach = __webpack_require__(75)();
 
 var getPrototypeOf = Object.getPrototypeOf;
 if (!getPrototypeOf) {
@@ -3981,7 +4260,8 @@ module.exports = function whyNotEqual(value, other) {
 
 
 /***/ }),
-/* 46 */
+
+/***/ 78:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4020,7 +4300,8 @@ module.exports = function isGeneratorFunction(fn) {
 
 
 /***/ }),
-/* 47 */
+
+/***/ 79:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4047,7 +4328,8 @@ module.exports = function isNumberObject(value) {
 
 
 /***/ }),
-/* 48 */
+
+/***/ 80:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4074,7 +4356,8 @@ module.exports = function isString(value) {
 
 
 /***/ }),
-/* 49 */
+
+/***/ 81:
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -4085,9 +4368,8 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 50 */,
-/* 51 */,
-/* 52 */
+
+/***/ 84:
 /***/ (function(module, exports) {
 
 var hasMap = typeof Map === 'function' && Map.prototype;
@@ -4325,7 +4607,8 @@ function collectionOf(type, size, entries) {
 
 
 /***/ }),
-/* 53 */
+
+/***/ 85:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4348,356 +4631,6 @@ module.exports = function isArguments(value) {
 };
 
 
-/***/ }),
-/* 54 */,
-/* 55 */,
-/* 56 */,
-/* 57 */,
-/* 58 */,
-/* 59 */,
-/* 60 */,
-/* 61 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process, Buffer) {
-
-function isArguments (obj) {
-  return Object.prototype.toString.call(obj) === '[object Arguments]'
-}
-
-module.exports = match
-
-function match (obj, pattern) {
-  return match_(obj, pattern, [], [])
-}
-
-/* istanbul ignore next */
-var log = (/\btmatch\b/.test(process.env.NODE_DEBUG || '')) ?
-  console.error : function () {}
-
-function match_ (obj, pattern, ca, cb) {
-  log('TMATCH', typeof obj, pattern)
-  if (obj == pattern) {
-    log('TMATCH same object or simple value, or problem')
-    // if one is object, and the other isn't, then this is bogus
-    if (obj === null || pattern === null) {
-      return true
-
-    } else if (typeof obj === 'object' && typeof pattern === 'object') {
-      return true
-
-    } else if (typeof obj === 'object' && typeof pattern !== 'object') {
-      return false
-
-    } else if (typeof obj !== 'object' && typeof pattern === 'object') {
-      return false
-
-    } else {
-      return true
-    }
-
-  } else if (obj === null || pattern === null) {
-    log('TMATCH null test, already failed ==')
-    return false
-
-  } else if (typeof obj === 'string' && pattern instanceof RegExp) {
-    log('TMATCH string~=regexp test')
-    return pattern.test(obj)
-
-  } else if (typeof obj === 'string' && typeof pattern === 'string' && pattern) {
-    log('TMATCH string~=string test')
-    return obj.indexOf(pattern) !== -1
-
-  } else if (obj instanceof Date && pattern instanceof Date) {
-    log('TMATCH date test')
-    return obj.getTime() === pattern.getTime()
-
-  } else if (obj instanceof Date && typeof pattern === 'string') {
-    log('TMATCH date~=string test')
-    return obj.getTime() === new Date(pattern).getTime()
-
-  } else if (isArguments(obj) || isArguments(pattern)) {
-    log('TMATCH arguments test')
-    var slice = Array.prototype.slice
-    return match_(slice.call(obj), slice.call(pattern), ca, cb)
-
-  } else if (pattern === Buffer) {
-    log('TMATCH Buffer ctor')
-    return Buffer.isBuffer(obj)
-
-  } else if (pattern === Function) {
-    log('TMATCH Function ctor')
-    return typeof obj === 'function'
-
-  } else if (pattern === Number) {
-    log('TMATCH Number ctor (finite, not NaN)')
-    return typeof obj === 'number' && obj === obj && isFinite(obj)
-
-  } else if (pattern !== pattern) {
-    log('TMATCH NaN')
-    return obj !== obj
-
-  } else if (pattern === String) {
-    log('TMATCH String ctor')
-    return typeof obj === 'string'
-
-  } else if (pattern === Boolean) {
-    log('TMATCH Boolean ctor')
-    return typeof obj === 'boolean'
-
-  } else if (pattern === Array) {
-    log('TMATCH Array ctor', pattern, Array.isArray(obj))
-    return Array.isArray(obj)
-
-  } else if (typeof pattern === 'function' && typeof obj === 'object') {
-    log('TMATCH object~=function')
-    return obj instanceof pattern
-
-  } else if (typeof obj !== 'object' || typeof pattern !== 'object') {
-    log('TMATCH obj is not object, pattern is not object, false')
-    return false
-
-  } else if (obj instanceof RegExp && pattern instanceof RegExp) {
-    log('TMATCH regexp~=regexp test')
-    return obj.source === pattern.source &&
-      obj.global === pattern.global &&
-      obj.multiline === pattern.multiline &&
-      obj.lastIndex === pattern.lastIndex &&
-      obj.ignoreCase === pattern.ignoreCase
-
-  } else if (Buffer.isBuffer(obj) && Buffer.isBuffer(pattern)) {
-    log('TMATCH buffer test')
-    if (obj.equals) {
-      return obj.equals(pattern)
-    } else {
-      if (obj.length !== pattern.length) return false
-
-      for (var j = 0; j < obj.length; j++) if (obj[j] != pattern[j]) return false
-
-      return true
-    }
-
-  } else {
-    // both are objects.  interesting case!
-    log('TMATCH object~=object test')
-    var kobj = Object.keys(obj)
-    var kpat = Object.keys(pattern)
-    log('  TMATCH patternkeys=%j objkeys=%j', kpat, kobj)
-
-    // don't bother with stack acrobatics if there's nothing there
-    if (kobj.length === 0 && kpat.length === 0) return true
-
-    // if we've seen this exact pattern and object already, then
-    // it means that pattern and obj have matching cyclicalness
-    // however, non-cyclical patterns can match cyclical objects
-    log('  TMATCH check seen objects...')
-    var cal = ca.length
-    while (cal--) if (ca[cal] === obj && cb[cal] === pattern) return true
-    ca.push(obj); cb.push(pattern)
-    log('  TMATCH not seen previously')
-
-    var key
-    for (var l = kpat.length - 1; l >= 0; l--) {
-      key = kpat[l]
-      log('  TMATCH test obj[%j]', key, obj[key], pattern[key])
-      if (!match_(obj[key], pattern[key], ca, cb)) return false
-    }
-
-    ca.pop()
-    cb.pop()
-
-    log('  TMATCH object pass')
-    return true
-  }
-
-  /* istanbul ignore next */
-  throw new Error('impossible to reach this point')
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(32).Buffer))
-
-/***/ }),
-/* 62 */
-/***/ (function(module, exports) {
-
-module.exports = function deepFreeze (o) {
-  Object.freeze(o);
-
-  Object.getOwnPropertyNames(o).forEach(function (prop) {
-    if (o.hasOwnProperty(prop)
-    && o[prop] !== null
-    && (typeof o[prop] === "object" || typeof o[prop] === "function")
-    && !Object.isFrozen(o[prop])) {
-      deepFreeze(o[prop]);
-    }
-  });
-  
-  return o;
-};
-
-
-/***/ }),
-/* 63 */,
-/* 64 */,
-/* 65 */,
-/* 66 */,
-/* 67 */,
-/* 68 */,
-/* 69 */,
-/* 70 */,
-/* 71 */,
-/* 72 */,
-/* 73 */,
-/* 74 */,
-/* 75 */,
-/* 76 */,
-/* 77 */,
-/* 78 */,
-/* 79 */,
-/* 80 */,
-/* 81 */,
-/* 82 */,
-/* 83 */,
-/* 84 */,
-/* 85 */,
-/* 86 */,
-/* 87 */,
-/* 88 */,
-/* 89 */,
-/* 90 */,
-/* 91 */,
-/* 92 */,
-/* 93 */,
-/* 94 */,
-/* 95 */,
-/* 96 */,
-/* 97 */,
-/* 98 */,
-/* 99 */,
-/* 100 */,
-/* 101 */,
-/* 102 */,
-/* 103 */,
-/* 104 */,
-/* 105 */,
-/* 106 */,
-/* 107 */,
-/* 108 */,
-/* 109 */,
-/* 110 */,
-/* 111 */,
-/* 112 */,
-/* 113 */,
-/* 114 */,
-/* 115 */,
-/* 116 */,
-/* 117 */,
-/* 118 */,
-/* 119 */,
-/* 120 */,
-/* 121 */,
-/* 122 */,
-/* 123 */,
-/* 124 */,
-/* 125 */,
-/* 126 */,
-/* 127 */,
-/* 128 */,
-/* 129 */,
-/* 130 */,
-/* 131 */,
-/* 132 */,
-/* 133 */,
-/* 134 */,
-/* 135 */,
-/* 136 */,
-/* 137 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _expect = __webpack_require__(24);
-
-var _expect2 = _interopRequireDefault(_expect);
-
-var _deepFreeze = __webpack_require__(62);
-
-var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-var addCounter = function addCounter(list) {
-  /* listが凍結されているためpushは不可
-  list.push(0);
-  return list;
-  */
-  /* return list.concat([0]); これでも良いがES6で書く */
-  return [].concat(_toConsumableArray(list), [0]);
-};
-
-var removeCounter = function removeCounter(list, index) {
-  /* 同様の理由でアウト
-  list.splice(index, 1);
-  return list;
-  */
-  /* これでも良いがES6で書く
-  return list
-    .slice(0, index)
-    .concat(list.slice(index + 1));
-  */
-  return [].concat(_toConsumableArray(list.slice(0, index)), _toConsumableArray(list.slice(index + 1)));
-};
-
-var incrementCounter = function incrementCounter(list, index) {
-  /* 同様の理由でアウト
-  list[index]++;
-  return list;
-  */
-  /* これでも良いがES6で書く
-  return list
-    .slice(0, index)
-    .concat(list[index] + 1)
-    .concat(list.slice(index + 1));
-  */
-  return [].concat(_toConsumableArray(list.slice(0, index)), [list[index] + 1], _toConsumableArray(list.slice(index + 1)));
-};
-
-/* テスト */
-var testAddCounter = function testAddCounter() {
-  var listBefore = [];
-  var listAfter = [0];
-
-  (0, _deepFreeze2.default)(listBefore); // テストのためにリストを凍結
-
-  (0, _expect2.default)(addCounter(listBefore)).toEqual(listAfter);
-};
-
-var testRemoveCounter = function testRemoveCounter() {
-  var listBefore = [0, 10, 20];
-  var listAfter = [0, 20];
-
-  (0, _deepFreeze2.default)(listBefore);
-
-  (0, _expect2.default)(removeCounter(listBefore, 1)).toEqual(listAfter);
-};
-
-var testIncrementCounter = function testIncrementCounter() {
-  var listBefore = [0, 10, 20];
-  var listAfter = [0, 11, 20];
-
-  (0, _deepFreeze2.default)(listBefore);
-
-  (0, _expect2.default)(incrementCounter(listBefore, 1)).toEqual(listAfter);
-};
-
-testAddCounter();
-testRemoveCounter();
-testIncrementCounter();
-console.log('All tests passed.');
-
 /***/ })
-/******/ ]);
+
+/******/ });
