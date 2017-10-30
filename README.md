@@ -233,4 +233,15 @@ Todoについて、すべて、完了したもの、未完了なものの表示�
 
 > だいぶ追加。childrenの使い方に注意。
 
+## Extracting Presentational Components (Todo, TodoList)
+TodoAppコンポーネントが巨大に
+分割して複数人で作業できるようコンポーネントは分けるべきなのでリファクタ  
 
+ToDoをまず分離
+- keyを削除、それぞれ別々のコンポーネントとして描画されるためkeyは要らなくなる
+- それぞれのコンポーネントを柔軟で合理的にするために、何の動作も記述されていないコンポーネントをたくさん作る方針で行く...どのように見えどのようにrenderされるかが重要なため.
+このようなコンポーネントを`representational component`と呼ぶ.
+そうするためにonClickをPropとして親から渡していくようにする
+
+これらに挙動を渡すトップレベルのTodoAppコンポーネントがContainer Componentに今回はなる.
+ここでTodoListを呼ぶ時Dispatchを渡す.

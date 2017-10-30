@@ -91,6 +91,39 @@ const FilterLink = ({
   );
 };
 
+const Todo = ({  // View representational component, どのように描画されるかのみが記述
+  onClick,
+  completed,
+  text
+}) => (
+  <li 
+    onClick={onClick}
+    style={{  // completedがtureなら打ち消し線を入れる
+      textDecoration:
+        completed ?
+          'line-through':
+          'none'
+    }}
+  >
+    {text}
+  </li>
+);  
+
+const TodoList = ({  // View representational component
+  todos,
+  onTodoClick
+}) => (
+  <ul>
+    {todos.map(todo =>
+      <Todo
+        key={todo.id}
+        {...todo}
+        onClick={() => onTodoClick(todo.id)}  //ここでdispatchも可能だがrepresentational component であることを保つためpropsで渡す
+      />
+    )}
+  </ul>
+);
+
 // filter の状態に応じて表示すべきtodoを返す
 const getVisibleTodos = (
   todos,
@@ -139,27 +172,15 @@ class TodoApp extends Component {
         }}>
           ADD_TODO
         </button>
-
-        <ul>
-          {visibileTodos.map(todo =>  // propsとして受けたstoreの中身を表示
-            <li key={todo.id}
-                onClick={() => {  // クリックされたらTOGGLE_TODOをdispatch()
-                  store.dispatch({
-                    type: 'TOGGLE_TODO',
-                    id: todo.id
-                  });
-                }}
-                style={{  // completedがtureなら打ち消し線を入れる
-                  textDecoration:
-                    todo.completed ?
-                      'line-through':
-                      'none'
-                }}>
-              {todo.text}
-            </li>
-          )}
-        </ul>
-        
+        <TodoList
+          todos={visibileTodos}
+          onTodoClick={id =>
+            store.dispatch({
+              type: 'TOGGLE_TODO',
+              id
+            })
+          } 
+        />
         <p>
           Show:
           {' '}
