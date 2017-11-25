@@ -16,5 +16,9 @@ module.exports={
         loader: 'babel-loader'
       }
     ]
+  },
+  devServer: {
+    contentBase: "./dist",
+    port: 3000,
   }
 }

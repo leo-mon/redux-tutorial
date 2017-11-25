@@ -245,3 +245,31 @@ ToDoをまず分離
 
 これらに挙動を渡すトップレベルのTodoAppコンポーネントがContainer Componentに今回はなる.
 ここでTodoListを呼ぶ時Dispatchを渡す.
+
+> タイトル的にrepresentational ではなく presentational かもしれない
+
+## Extracting Presentational Components (AddTodo, Footer, FilterLink)
+別の部分も細かいコンポーネントへ分割していく
+
+> 構造整理
+
+```
+TodoApp: コンテナコンポーネント、store.dispatch()はここから子へと渡していく
+  ├ AddTodo
+  ├ TodoList
+    ├ Todo
+  ├ Footer
+    ├ FilterLink
+```
+
+AddTodo
+クリックされたらonAddClickをコール、入力された値を渡す
+onAddClickはTodoAppから渡されている、入力された値でADD_TODOをdispatch
+ADD_TODOはそれまでの値と結合された値を結合して返す（ここがreducer）
+
+TodoList
+表示部分、TodoAppでのstore.getState()で手に入れたreduxからの値を表示等々
+onTodoClickでcompletedを変化させる、これもTodoAppから渡す、completedを反転する
+
+Footer
+見えるフィルタの表示や変更

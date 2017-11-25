@@ -27350,8 +27350,6 @@ module.exports = function(module) {
 "use strict";
 
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _expect = __webpack_require__(42);
@@ -27373,12 +27371,6 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 var _redux = __webpack_require__(121);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -27451,7 +27443,8 @@ var store = (0, _redux.createStore)(todoApp);
 var FilterLink = function FilterLink(_ref) {
   var filter = _ref.filter,
       currentFilter = _ref.currentFilter,
-      children = _ref.children;
+      children = _ref.children,
+      _onClick = _ref.onClick;
 
   if (filter === currentFilter) {
     // 現在表示中の要素は状態がわかるようにspanで返却
@@ -27468,10 +27461,7 @@ var FilterLink = function FilterLink(_ref) {
       { href: '#',
         onClick: function onClick(e) {
           e.preventDefault(); // href属性へのクリックでブラウザがトップまでスクロールを勝手にしてしまうことを抑制
-          store.dispatch({
-            type: 'SET_VISIBILITY_FILTER',
-            filter: filter
-          });
+          _onClick(filter);
         }
       },
       children
@@ -27479,10 +27469,50 @@ var FilterLink = function FilterLink(_ref) {
   );
 };
 
-var Todo = function Todo(_ref2) {
-  var onClick = _ref2.onClick,
-      completed = _ref2.completed,
-      text = _ref2.text;
+var Footer = function Footer(_ref2) {
+  var visibilityFilter = _ref2.visibilityFilter,
+      onFilterClick = _ref2.onFilterClick;
+  return _react2.default.createElement(
+    'p',
+    null,
+    'Show:',
+    ' ',
+    _react2.default.createElement(
+      FilterLink,
+      {
+        filter: 'SHOW_ALL',
+        currentFilter: visibilityFilter,
+        onClick: onFilterClick
+      },
+      'All'
+    ),
+    ' ',
+    _react2.default.createElement(
+      FilterLink,
+      {
+        filter: 'SHOW_ACTIVE',
+        currentFilter: visibilityFilter,
+        onClick: onFilterClick
+      },
+      'Active'
+    ),
+    ' ',
+    _react2.default.createElement(
+      FilterLink,
+      {
+        filter: 'SHOW_COMPLETED',
+        currentFilter: visibilityFilter,
+        onClick: onFilterClick
+      },
+      'Completed'
+    )
+  );
+};
+
+var Todo = function Todo(_ref3) {
+  var onClick = _ref3.onClick,
+      completed = _ref3.completed,
+      text = _ref3.text;
   return _react2.default.createElement(
     'li',
     {
@@ -27495,21 +27525,44 @@ var Todo = function Todo(_ref2) {
   );
 };
 
-var TodoList = function TodoList(_ref3) {
-  var todos = _ref3.todos,
-      onTodoClick = _ref3.onTodoClick;
+var TodoList = function TodoList(_ref4) {
+  var todos = _ref4.todos,
+      onTodoClick = _ref4.onTodoClick;
   return _react2.default.createElement(
     'ul',
     null,
     todos.map(function (todo) {
       return _react2.default.createElement(Todo, _extends({
         key: todo.id
-      }, todo, {
+      }, todo, { //　個々の値に展開、ここではcompletedとtextを展開している？
         onClick: function onClick() {
           return onTodoClick(todo.id);
-        } //ここでdispatchも可能だがrepresentational component であることを保つためpropsで渡す
+        } //ここでdispatchも可能だがpresentational component であることを保つためpropsで渡す
       }));
     })
+  );
+};
+
+var AddTodo = function AddTodo(_ref5) {
+  var onAddClick = _ref5.onAddClick;
+
+  var input = void 0;
+
+  return _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement('input', { ref: function ref(node) {
+        // Reactのref APIを利用、フォームの値取得
+        input = node;
+      } }),
+    _react2.default.createElement(
+      'button',
+      { onClick: function onClick() {
+          onAddClick(input.value);
+          input.value = '';
+        } },
+      'ADD_TODO'
+    )
   );
 };
 
@@ -27532,96 +27585,43 @@ var getVisibleTodos = function getVisibleTodos(todos, filter) {
 var nextTodoId = 0; // action.idに利用するグローバル変数
 
 // TodoAppコンポーネント
-
-var TodoApp = function (_Component) {
-  _inherits(TodoApp, _Component);
-
-  function TodoApp() {
-    _classCallCheck(this, TodoApp);
-
-    return _possibleConstructorReturn(this, (TodoApp.__proto__ || Object.getPrototypeOf(TodoApp)).apply(this, arguments));
-  }
-
-  _createClass(TodoApp, [{
-    key: 'render',
-    value: function render() {
-      var _this2 = this;
-
-      var _props = this.props,
-          todos = _props.todos,
-          visibilityFilter = _props.visibilityFilter;
-
-      var visibileTodos = getVisibleTodos(todos, visibilityFilter);
-      return _react2.default.createElement(
-        'div',
-        null,
-        _react2.default.createElement('input', { ref: function ref(node) {
-            // Reactのref APIを利用、フォームの値取得
-            _this2.input = node;
-          } }),
-        _react2.default.createElement(
-          'button',
-          { onClick: function onClick() {
-              store.dispatch({
-                type: 'ADD_TODO',
-                text: _this2.input.value,
-                id: nextTodoId++
-              });
-              _this2.input.value = '';
-            } },
-          'ADD_TODO'
-        ),
-        _react2.default.createElement(TodoList, {
-          todos: visibileTodos,
-          onTodoClick: function onTodoClick(id) {
-            return store.dispatch({
-              type: 'TOGGLE_TODO',
-              id: id
-            });
-          }
-        }),
-        _react2.default.createElement(
-          'p',
-          null,
-          'Show:',
-          ' ',
-          _react2.default.createElement(
-            FilterLink,
-            {
-              filter: 'SHOW_ALL',
-              currentFilter: visibilityFilter
-            },
-            'All'
-          ),
-          ' ',
-          _react2.default.createElement(
-            FilterLink,
-            {
-              filter: 'SHOW_ACTIVE',
-              currentFilter: visibilityFilter
-            },
-            'Active'
-          ),
-          ' ',
-          _react2.default.createElement(
-            FilterLink,
-            {
-              filter: 'SHOW_COMPLETED',
-              currentFilter: visibilityFilter
-            },
-            'Completed'
-          )
-        )
-      );
-    }
-  }]);
-
-  return TodoApp;
-}(_react.Component);
+var TodoApp = function TodoApp(_ref6) {
+  var todos = _ref6.todos,
+      visibilityFilter = _ref6.visibilityFilter;
+  return _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement(AddTodo, {
+      onAddClick: function onAddClick(text) {
+        return store.dispatch({
+          type: 'ADD_TODO',
+          id: nextTodoId++,
+          text: text
+        });
+      }
+    }),
+    _react2.default.createElement(TodoList, {
+      todos: getVisibleTodos(todos, visibilityFilter),
+      onTodoClick: function onTodoClick(id) {
+        return store.dispatch({
+          type: 'TOGGLE_TODO',
+          id: id
+        });
+      }
+    }),
+    _react2.default.createElement(Footer, {
+      visibilityFilter: visibilityFilter,
+      onFilterClick: function onFilterClick(filter) {
+        return store.dispatch({
+          type: 'SET_VISIBILITY_FILTER',
+          filter: filter
+        });
+      }
+    })
+  );
+};
 
 // ビュー関数
-
-
 var render = function render() {
   _reactDom2.default.render(_react2.default.createElement(TodoApp, store.getState()), document.getElementById('root'));
   console.log('Next Todo ID: ' + nextTodoId);
