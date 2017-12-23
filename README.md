@@ -273,3 +273,16 @@ onTodoClickでcompletedを変化させる、これもTodoAppから渡す、compl
 
 Footer
 見えるフィルタの表示や変更
+
+> この辺りでWebpack dev server導入
+
+## Extracting Container Components (FilterLink)
+
+前節までのアプローチは中間コンポーネントに必要がない情報が渡ってしまいコードが複雑に
+例えばFliterlinkはcurrentfilterを必要とするがそのためにFooterでvisibilityFilterをTodoAppから受けとり渡す必要がある。
+今回はFooterをリファクタ、どちらの要素(filterの値やonClickへと渡していく関数)もいらないので削除してrootコンポーネントとして置くのに止める
+FilterLinkをContainer、Linkをpresentationalとして再構成
+しかしstore.subscribe()に何も登録しておらず、storeを変更しても再描画されない可能性が生じる
+（現在はStoreが変更されると全コンポーネントに再描画が走るようにしているため変更されるがそれは非効率）
+そのためReactの描画のライフサイクル（componentDidMount, componentWillUnmountß）を利用して強制的に再描画を走らせるようにする。
+
