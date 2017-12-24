@@ -3,6 +3,7 @@ import deepFreeze from 'deep-freeze'
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { createStore, combineReducers } from 'redux'
+import { Provider} from 'react-redux'
 
 // Reducer
 // 個々の要素をいじるReducer
@@ -276,20 +277,6 @@ const TodoApp = () => (
   </div>
 )
 
-class Provider extends Component {
-  getChildContext() {
-    return {
-      store: this.props.store
-    };
-  }
-
-  render() {
-    return this.props.children;
-  }
-}
-Provider.childContextTypes = {
-  store: React.PropTypes.object
-};
 
 // StoreをPropsとして渡す
 ReactDOM.render(

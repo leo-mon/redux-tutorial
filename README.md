@@ -333,3 +333,7 @@ Contextは強力だがReactの明示的なデータフローにはそぐわな�
 またContext APIはFixされていないので変更の恐れがあることも注意するべき
 
 > 実際v16以降はPropTypeへのアクセスはdepricateになった模様
+
+
+## Passing the Store Down with <Provider> from React Redux
+Providerは自分で定義する必要はなく、react-reduxをインストールして使えば良い
