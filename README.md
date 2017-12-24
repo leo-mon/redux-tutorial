@@ -314,3 +314,22 @@ Add TodoはContainerとPresentationalな部分が混在しているが、十分�
 
 > AddTodoで不要なonAddClickを渡していたのを消し忘れていたので削除(Extracting Presentational Componentsでおそらく消していた手筈）
 
+## Passing the Store Down Implicitly via Context
+PresentatioalコンポーネントにもStoreとやりとりさせなければならない、という点で前節は煩雑になる  
+違うやり方としてReact のContextを利用する方法がある
+
+Provider を定義し、それでTodoAppを包むことで、Propsを孫コンポーネントにまで届けることができる
+ただしこれにはChildContextTypesで何を渡していくかを定義する必要あり
+
+受け取るコンポーネント側ではpropsの代わりにcontextを利用すりればよい　 
+ただしこちらもcontextTypeで受け取る値を指定してやる必要あり
+
+中間コンポーネントを飛ばすワームホールのように働く  
+どの階層にも届くために、FooterではContexttypeを定義していない  
+
+Contextは強力だがReactの明示的なデータフローにはそぐわない
+グローバル変数をどこでも使えるようにしてしまうが、このように依存性の注入以外に用いるべきではない
+
+またContext APIはFixされていないので変更の恐れがあることも注意するべき
+
+> 実際v16以降はPropTypeへのアクセスはdepricateになった模様

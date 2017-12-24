@@ -87,7 +87,7 @@ const Link = ({
 
 class FilterLink extends Component {
   componentDidMount() {
-    const { store } = this.props;
+    const { store } = this.context;
     this.unsubscribe = store.subscribe(() =>
       this.forceUpdate()  // storeが更新された際コンポーネントを変更するよう、コンポーネントマウント前に登録
     );
@@ -99,7 +99,7 @@ class FilterLink extends Component {
 
   render() {
     const props = this.props;
-    const { store } = props;
+    const { store } = this.context;
     const state = store.getState();
 
     return (
@@ -120,28 +120,28 @@ class FilterLink extends Component {
     )
   }
 }
+FilterLink.contextTypes = {
+  store: React.PropTypes.object
+};
 
-const Footer = ({ store }) => (
+const Footer = () => (
   <p>
     Show:
     {' '}
     <FilterLink
       filter='SHOW_ALL'
-      store={store}
     >
       All
     </FilterLink>
     {' '}
     <FilterLink
       filter='SHOW_ACTIVE'
-      store={store}
     >
       Active
     </FilterLink>
     {' '}
     <FilterLink
       filter='SHOW_COMPLETED'
-      store={store}
     >
       Completed
     </FilterLink>
@@ -181,7 +181,7 @@ const TodoList = ({  // View presentational component
   </ul>
 );
 
-const AddTodo = ({ store }) => {
+const AddTodo = (props, { store }) => {  // 2番目の引数にContextを渡す
   let input;
 
   return (
@@ -201,8 +201,11 @@ const AddTodo = ({ store }) => {
         ADD_TODO
       </button>
     </div>
-  )
-}
+  );
+};
+AddTodo.contextTypes = {
+  store: React.PropTypes.object
+};
 
 // filter の状態に応じて表示すべきtodoを返す
 const getVisibleTodos = (
@@ -225,7 +228,7 @@ const getVisibleTodos = (
 
 class VisibleTodoList extends Component {
   componentDidMount() {
-    const { store } = this.props;
+    const { store } = this.context;
     this.unsubscribe = store.subscribe(() =>
       this.forceUpdate()  // storeが更新された際コンポーネントを変更するよう、コンポーネントマウント前に登録
     );
@@ -237,7 +240,7 @@ class VisibleTodoList extends Component {
 
   render() {
     const props = this.props;
-    const { store } = props;
+    const { store } = this.context;
     const state = store.getState();
 
     return (
@@ -258,22 +261,41 @@ class VisibleTodoList extends Component {
     );
   }
 }
-
+VisibleTodoList.contextTypes = {
+  store: React.PropTypes.object
+};
 
 let nextTodoId = 0;  // action.idに利用するグローバル変数
 
 // TodoAppコンポーネント
-const TodoApp = ({ store }) => (
+const TodoApp = () => (
   <div>
-    <AddTodo store={store} />
-    <VisibleTodoList store={store} />
-    <Footer store={store} />
+    <AddTodo />
+    <VisibleTodoList />
+    <Footer />
   </div>
 )
 
+class Provider extends Component {
+  getChildContext() {
+    return {
+      store: this.props.store
+    };
+  }
+
+  render() {
+    return this.props.children;
+  }
+}
+Provider.childContextTypes = {
+  store: React.PropTypes.object
+};
+
 // StoreをPropsとして渡す
 ReactDOM.render(
-  <TodoApp store={createStore(todoApp)} />,
+  <Provider store={createStore(todoApp)} >
+    <TodoApp />
+  </Provider>,
   document.getElementById('root')
 );
 // console.log('Next Todo ID: ' + nextTodoId);
