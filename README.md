@@ -294,5 +294,23 @@ ContainerとしてVisibleTodoを用意しそこでreduxと通信、Presentationa
 
 Add TodoはContainerとPresentationalな部分が混在しているが、十分シンプルかつ今後追加されるようなものでもないのでそのままにする
 
+
+
 このような分離をドグマとしてとらえてはいけない、コードの複雑さが解消される時のみで十分  
 一般的には、最初にPresentationalなコンポーネントを分離して、単にpropsを中継するだけのコンポーネントが増えて来たら、コンテナを作成してデータを渡すようにする
+
+
+## Passing the Store Down Explicitly via Props
+これまでは`store`をグローバル変数で宣言しておいてそれを各Container内で呼んでいたが、これにはいくつか問題点がある
+
+- テストがしづらい（テストケースによっては異なるStoreを与えたくなる）
+- サーバーでの複製が非常にしづらい: リクエストはそれぞれ異なるデータを要求するため、store のインスタンスは全てのリクエストに個別に割り振りたい
+
+ただしどのコンポーネントもStoreとのやり取りは行う必要があるため、propsとして渡すのが一手となる（不便であるため解消法は次節以降で解説）
+
+```
+{store} = this.props  // ES6の記法
+```
+
+> AddTodoで不要なonAddClickを渡していたのを消し忘れていたので削除(Extracting Presentational Componentsでおそらく消していた手筈）
+

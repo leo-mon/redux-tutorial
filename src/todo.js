@@ -63,9 +63,6 @@ const todoApp = combineReducers({
   visibilityFilter
 })
 
-// ReducerをStoreに登録
-const store = createStore(todoApp);
-
 // フィルタリング指定リンクのコンポーネント
 const Link = ({
   active,
@@ -90,6 +87,7 @@ const Link = ({
 
 class FilterLink extends Component {
   componentDidMount() {
+    const { store } = this.props;
     this.unsubscribe = store.subscribe(() =>
       this.forceUpdate()  // storeが更新された際コンポーネントを変更するよう、コンポーネントマウント前に登録
     );
@@ -101,6 +99,7 @@ class FilterLink extends Component {
 
   render() {
     const props = this.props;
+    const { store } = props;
     const state = store.getState();
 
     return (
@@ -122,24 +121,27 @@ class FilterLink extends Component {
   }
 }
 
-const Footer = () => (
+const Footer = ({ store }) => (
   <p>
     Show:
     {' '}
     <FilterLink
       filter='SHOW_ALL'
+      store={store}
     >
       All
     </FilterLink>
     {' '}
     <FilterLink
       filter='SHOW_ACTIVE'
+      store={store}
     >
       Active
     </FilterLink>
     {' '}
     <FilterLink
       filter='SHOW_COMPLETED'
+      store={store}
     >
       Completed
     </FilterLink>
@@ -179,9 +181,7 @@ const TodoList = ({  // View presentational component
   </ul>
 );
 
-const AddTodo = ({
-  onAddClick
-}) => {
+const AddTodo = ({ store }) => {
   let input;
 
   return (
@@ -225,6 +225,7 @@ const getVisibleTodos = (
 
 class VisibleTodoList extends Component {
   componentDidMount() {
+    const { store } = this.props;
     this.unsubscribe = store.subscribe(() =>
       this.forceUpdate()  // storeが更新された際コンポーネントを変更するよう、コンポーネントマウント前に登録
     );
@@ -236,6 +237,7 @@ class VisibleTodoList extends Component {
 
   render() {
     const props = this.props;
+    const { store } = props;
     const state = store.getState();
 
     return (
@@ -261,17 +263,17 @@ class VisibleTodoList extends Component {
 let nextTodoId = 0;  // action.idに利用するグローバル変数
 
 // TodoAppコンポーネント
-const TodoApp = () => (
+const TodoApp = ({ store }) => (
   <div>
-    <AddTodo />
-    <VisibleTodoList />
-    <Footer />
+    <AddTodo store={store} />
+    <VisibleTodoList store={store} />
+    <Footer store={store} />
   </div>
 )
 
-// ビュー関数
+// StoreをPropsとして渡す
 ReactDOM.render(
-  <TodoApp />,
+  <TodoApp store={createStore(todoApp)} />,
   document.getElementById('root')
 );
 // console.log('Next Todo ID: ' + nextTodoId);
