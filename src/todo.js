@@ -3,7 +3,7 @@ import deepFreeze from 'deep-freeze'
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { createStore, combineReducers } from 'redux'
-import { Provider} from 'react-redux'
+import { Provider, connect } from 'react-redux'
 
 // Reducer
 // 個々の要素をいじるReducer
@@ -182,6 +182,8 @@ const TodoList = ({  // View presentational component
   </ul>
 );
 
+let nextTodoId = 0;  // action.idに利用するグローバル変数
+
 const AddTodo = (props, { store }) => {  // 2番目の引数にContextを渡す
   let input;
 
@@ -227,46 +229,31 @@ const getVisibleTodos = (
   }
 }
 
-class VisibleTodoList extends Component {
-  componentDidMount() {
-    const { store } = this.context;
-    this.unsubscribe = store.subscribe(() =>
-      this.forceUpdate()  // storeが更新された際コンポーネントを変更するよう、コンポーネントマウント前に登録
-    );
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();  // subscribe()の返り値、アンマウント前に登録解除
-  } 
-
-  render() {
-    const props = this.props;
-    const { store } = this.context;
-    const state = store.getState();
-
-    return (
-      <TodoList
-        todos={
-          getVisibleTodos(
-            state.todos,
-            state.visibilityFilter
-          )
-        }
-        onTodoClick={id =>
-          store.dispatch({
-            type: 'TOGGLE_TODO',
-            id
-          })
-        }
-      />
-    );
-  }
-}
-VisibleTodoList.contextTypes = {
-  store: React.PropTypes.object
+const mapStateToProps = (state) => {
+  return {
+    todos: getVisibleTodos(
+      state.todos,
+      state.visibilityFilter
+    )
+  };
 };
 
-let nextTodoId = 0;  // action.idに利用するグローバル変数
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onTodoClick: (id) => {
+      dispatch({
+        type: 'TOGGLE_TODO',
+        id
+      })
+    }
+  };
+};
+
+const VisibleTodoList = connect(  //connectを利用してstoreとのやりとり
+  mapStateToProps,  // TodoListへ注入するStateを返す関数
+  mapDispatchToProps  // TodoListへ注入するdispatcherを返す関数
+)(TodoList);
+
 
 // TodoAppコンポーネント
 const TodoApp = () => (

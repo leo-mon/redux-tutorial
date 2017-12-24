@@ -337,3 +337,16 @@ Contextは強力だがReactの明示的なデータフローにはそぐわな�
 
 ## Passing the Store Down with <Provider> from React Redux
 Providerは自分で定義する必要はなく、react-reduxをインストールして使えば良い
+
+
+## Generating Containers with connect() from React Redux (VisibleTodoList)
+
+propsへと与えられる値について、関数として外だし
+
+- mapStateToProps: 状態として渡すPropsを返す関数
+- mapDispatchToProps: アクションを指定したdispatchを返す関数
+
+これらを`connect`メソッドでつなげる、第一引数にmapStateToProps, 第二引数にmapDispatchToProps  
+一旦関数を閉じて再度開き、このPropsが渡される対象(TodoList)を引数に取るようにする
+
+こうすることでVisibleTodoはPropTypeの宣言などを省略化した状態のコンテナコンポーネントとして書くことができる
