@@ -191,7 +191,11 @@ const AddTodo = ({
       }} />
 
       <button onClick={() => {
-        onAddClick(input.value);
+        store.dispatch({
+          type: 'ADD_TODO',
+          id: nextTodoId++,
+          text: input.value
+        })
         input.value = '';
       }}>
         ADD_TODO
@@ -219,55 +223,59 @@ const getVisibleTodos = (
   }
 }
 
+class VisibleTodoList extends Component {
+  componentDidMount() {
+    this.unsubscribe = store.subscribe(() =>
+      this.forceUpdate()  // storeが更新された際コンポーネントを変更するよう、コンポーネントマウント前に登録
+    );
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();  // subscribe()の返り値、アンマウント前に登録解除
+  } 
+
+  render() {
+    const props = this.props;
+    const state = store.getState();
+
+    return (
+      <TodoList
+        todos={
+          getVisibleTodos(
+            state.todos,
+            state.visibilityFilter
+          )
+        }
+        onTodoClick={id =>
+          store.dispatch({
+            type: 'TOGGLE_TODO',
+            id
+          })
+        }
+      />
+    );
+  }
+}
+
+
 let nextTodoId = 0;  // action.idに利用するグローバル変数
 
 // TodoAppコンポーネント
-const TodoApp = ({
-  todos,
-  visibilityFilter 
-}) => (
+const TodoApp = () => (
   <div>
-    <AddTodo
-      onAddClick={text =>
-        store.dispatch({
-          type: 'ADD_TODO',
-          id: nextTodoId++,
-          text
-        })
-      }
-    />
-    <TodoList
-      todos={
-        getVisibleTodos(
-          todos,
-          visibilityFilter
-        )
-      }
-      onTodoClick={id =>
-        store.dispatch({
-          type: 'TOGGLE_TODO',
-          id
-        })
-      } 
-    />
+    <AddTodo />
+    <VisibleTodoList />
     <Footer />
   </div>
 )
 
 // ビュー関数
-const render = () => {
-  ReactDOM.render(
-    <TodoApp
-      {...store.getState()}  //todosの状態をpropsとして渡す
-    />,
-    document.getElementById('root')
-  );
-  console.log('Next Todo ID: ' + nextTodoId);
-  console.log(store.getState());
-};
-
-store.subscribe(render);
-render();
+ReactDOM.render(
+  <TodoApp />,
+  document.getElementById('root')
+);
+// console.log('Next Todo ID: ' + nextTodoId);
+// console.log(store.getState());
 
 /* 
 console.log('Initial state:');

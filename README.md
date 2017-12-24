@@ -286,3 +286,13 @@ FilterLinkをContainer、Linkをpresentationalとして再構成
 （現在はStoreが変更されると全コンポーネントに再描画が走るようにしているため変更されるがそれは非効率）
 そのためReactの描画のライフサイクル（componentDidMount, componentWillUnmountß）を利用して強制的に再描画を走らせるようにする。
 
+## Extracting Container Components (VisibleTodoList, AddTodo)
+前節のような分離は、データフローを少し複雑にするが、FilterLinkを追加のデータを考慮せずに他のコンポーネント内で使えるようにすることができる
+
+同様にTodoListをPresentationalに保ったまま、TodoAppから分離させる  
+ContainerとしてVisibleTodoを用意しそこでreduxと通信、PresentationalであるTodoListへと渡す
+
+Add TodoはContainerとPresentationalな部分が混在しているが、十分シンプルかつ今後追加されるようなものでもないのでそのままにする
+
+このような分離をドグマとしてとらえてはいけない、コードの複雑さが解消される時のみで十分  
+一般的には、最初にPresentationalなコンポーネントを分離して、単にpropsを中継するだけのコンポーネントが増えて来たら、コンテナを作成してデータを渡すようにする
