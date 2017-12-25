@@ -350,3 +350,13 @@ propsへと与えられる値について、関数として外だし
 一旦関数を閉じて再度開き、このPropsが渡される対象(TodoList)を引数に取るようにする
 
 こうすることでVisibleTodoはPropTypeの宣言などを省略化した状態のコンテナコンポーネントとして書くことができる
+
+
+## Generating Containers with connect() from React Redux (AddTodo)
+ファイル分けを適切に行って入ればmap...ToProps()はそのままの名称でいいが今回は1ファイルのため名前を変更しておく
+AddTodoでも同様にconnectを使ってStoreとやりとりをできるようにする
+
+> AddTodoはContainerでありPresentationalでもあるため、connectで自身でをラップして自身でStoreを受け取れるようにする
+
+connectは第二引数に何も渡さないとdispatchを自動で渡す
+

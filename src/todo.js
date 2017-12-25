@@ -183,8 +183,7 @@ const TodoList = ({  // View presentational component
 );
 
 let nextTodoId = 0;  // action.idに利用するグローバル変数
-
-const AddTodo = (props, { store }) => {  // 2番目の引数にContextを渡す
+let AddTodo = ({ dispatch }) => {  // connectでラップしたものを再度入れるためletに
   let input;
 
   return (
@@ -194,7 +193,7 @@ const AddTodo = (props, { store }) => {  // 2番目の引数にContextを渡す
       }} />
 
       <button onClick={() => {
-        store.dispatch({
+        dispatch({
           type: 'ADD_TODO',
           id: nextTodoId++,
           text: input.value
@@ -206,9 +205,24 @@ const AddTodo = (props, { store }) => {  // 2番目の引数にContextを渡す
     </div>
   );
 };
-AddTodo.contextTypes = {
-  store: React.PropTypes.object
-};
+AddTodo = connect()(AddTodo);
+
+/*  冗長なパターンその二
+AddTodo = connect(
+  null,
+  null //第二引数にnullかfalseを入れるとdispatchは自動で渡される
+)(AddTodo);
+*/
+/*  冗長なパターンその一
+AddTodo = connect(
+  state => {
+    return {};　// Stateを持たないため空
+  },
+  dispatch => {
+    return { dispatch };  // dispatchを受け取るだけで良い
+  }
+)(AddTodo);
+*/
 
 // filter の状態に応じて表示すべきtodoを返す
 const getVisibleTodos = (
@@ -229,7 +243,9 @@ const getVisibleTodos = (
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToTodoListProps = (  // ファイル分割してmapStateToPropsのままの方が望ましい
+  state
+) => {
   return {
     todos: getVisibleTodos(
       state.todos,
@@ -237,8 +253,9 @@ const mapStateToProps = (state) => {
     )
   };
 };
-
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToTodoListProps = (
+  dispatch
+) => {
   return {
     onTodoClick: (id) => {
       dispatch({
@@ -248,10 +265,9 @@ const mapDispatchToProps = (dispatch) => {
     }
   };
 };
-
 const VisibleTodoList = connect(  //connectを利用してstoreとのやりとり
-  mapStateToProps,  // TodoListへ注入するStateを返す関数
-  mapDispatchToProps  // TodoListへ注入するdispatcherを返す関数
+  mapStateToTodoListProps,  // TodoListへ注入するStateを返す関数
+  mapDispatchToTodoListProps  // TodoListへ注入するdispatcherを返す関数
 )(TodoList);
 
 
