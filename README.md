@@ -363,3 +363,9 @@ connectは第二引数に何も渡さないとdispatchを自動で渡す
 ## Generating Containers with connect() from React Redux (FooterLink)
 Containerコンポーネントが自身の持つPropsをconnectorを通じて注入したいときはmapStateToProps, mapDispatchToPropsともに第二引数で渡すことができる(わかりやすくするためownPropsと名付ける)  
 
+> 警告も出なくなるので基本connect()を使ってStoreの情報を注入は行った方が良さげ
+
+## Extracting Action Creators
+actionがローカルで宣言されていると、例えば他のコンポーネントでAddTodoをdispatchしたいときに不便  
+
+そこでaddTodoなどのdispatchされるactionを返すような関数を書いて一箇所にまとめておくことで、他の人がどのようなActionがあるのかを俯瞰しやすくする

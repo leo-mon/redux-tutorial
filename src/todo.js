@@ -64,6 +64,31 @@ const todoApp = combineReducers({
   visibilityFilter
 })
 
+
+// Action Creator
+let nextTodoId = 0;  // action.idに利用するグローバル変数
+const addTodo = (text) => {  // acton creator, dispatchされるアクションを返す
+  return {
+    type: 'ADD_TODO',
+    id: nextTodoId++,
+    text
+  };
+};
+
+const toggleTodo = (id) => {
+  return {
+    type: 'TOGGLE_TODO',
+    id
+  };
+};
+
+const setVisibilityFilter = (filter) => {
+  return {
+    type: 'SET_VISIBILITY_FILTER',
+    filter
+  };
+};
+
 // フィルタリング指定リンクのコンポーネント
 const Link = ({
   active,
@@ -104,10 +129,7 @@ const mapDispatchToLinkProps = (
 ) => {
   return {
     onClick: () => { 
-      dispatch({
-        type: 'SET_VISIBILITY_FILTER',
-        filter: ownProps.filter
-      })
+      dispatch(setVisibilityFilter(ownProps.filter))
     }
   };
 }
@@ -174,7 +196,6 @@ const TodoList = ({  // View presentational component
   </ul>
 );
 
-let nextTodoId = 0;  // action.idに利用するグローバル変数
 let AddTodo = ({ dispatch }) => {  // connectでラップしたものを再度入れるためletに
   let input;
 
@@ -185,11 +206,7 @@ let AddTodo = ({ dispatch }) => {  // connectでラップしたものを再度�
       }} />
 
       <button onClick={() => {
-        dispatch({
-          type: 'ADD_TODO',
-          id: nextTodoId++,
-          text: input.value
-        })
+        dispatch(addTodo(input.value));
         input.value = '';
       }}>
         ADD_TODO
@@ -250,10 +267,7 @@ const mapDispatchToTodoListProps = (
 ) => {
   return {
     onTodoClick: (id) => {
-      dispatch({
-        type: 'TOGGLE_TODO',
-        id
-      })
+      dispatch(toggleTodo(id))
     }
   };
 };
