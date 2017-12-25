@@ -360,3 +360,6 @@ AddTodoでも同様にconnectを使ってStoreとやりとりをできるよう�
 
 connectは第二引数に何も渡さないとdispatchを自動で渡す
 
+## Generating Containers with connect() from React Redux (FooterLink)
+Containerコンポーネントが自身の持つPropsをconnectorを通じて注入したいときはmapStateToProps, mapDispatchToPropsともに第二引数で渡すことができる(わかりやすくするためownPropsと名付ける)  
+
