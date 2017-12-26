@@ -369,3 +369,34 @@ Containerコンポーネントが自身の持つPropsをconnectorを通じて注
 actionがローカルで宣言されていると、例えば他のコンポーネントでAddTodoをdispatchしたいときに不便  
 
 そこでaddTodoなどのdispatchされるactionを返すような関数を書いて一箇所にまとめておくことで、他の人がどのようなActionがあるのかを俯瞰しやすくする
+
+## Sprit into MultipleFiles
+
+> チュートリアルにはなし、独自
+> https://redux.js.org/docs/basics/ExampleTodoList.html に従う形にファイルわけ
+> それに伴いいらないファイルは削除
+> webpack.config.jsもそれに合わせ変更、sorcemapも追加
+> あれこれするうちにyarnで入れたファイルが...
+
+
+```
+src
+├── actions
+│   └── index.js               .. Action Createrを納めたファイル
+├── components             .. Presentationalコンポーネント
+│   ├── App.js                 .. Provider直下でまとめるもの（これまでTodoApp）
+│   ├── Footer.js
+│   ├── Link.js
+│   ├── Todo.js
+│   └── TodoList.js
+├── containers             .. Containerコンポーネント
+│   ├── AddTodo.js
+│   ├── FilterLink.js
+│   └── VisibleTodoList.js
+├── index.js               .. エントリーポイント、Providerはここで
+├── reducers 
+│   ├── index.js               .. CombineReducerを実行
+│   ├── todos.js
+│   └── visibilityFilter.j
+└── (todo.js)              .. これまでのApp
+```

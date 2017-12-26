@@ -1,8 +1,6 @@
 module.exports={
   entry: {
-    app: "./src/app.js",
-    multicounters: "./src/multicounters.js",
-    todo: "./src/todo.js"
+    index: "./src/index.js",
   },
   output: {
     path: __dirname+"/dist",
@@ -17,7 +15,8 @@ module.exports={
       }
     ]
   },
-  devServer: {
+  devtool: 'inline-source-map',  // ソースマップ追加
+  devServer: {  // webpack-dev-serverの設定
     contentBase: "./dist",
     port: 3000,
   }
